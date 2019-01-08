@@ -1,5 +1,6 @@
 package util.rlestorage;
 
+import static util.math.MathUtils.clamp;
 import static util.math.MathUtils.round;
 import util.math.Vec2d;
 import util.math.Vec3d;
@@ -8,25 +9,14 @@ public interface IntConverter<T> {
 
     public T fromInt(int i);
 
-    public static int pack(int[] sizes, int... values) {
-        int r = 0;
-        int m = 1;
-        for (int i = 0; i < sizes.length; i++) {
-            r += values[i] * m;
-            m <<= sizes[i];
-        }
-        return r;
+    public static int pack(int value, int pos, int size) {
+        return (value & ((1 << size) - 1)) << pos;
     }
 
     public int toInt(T t);
 
-    public static int[] unpack(int[] sizes, int value) {
-        int[] r = new int[sizes.length];
-        for (int i = 0; i < sizes.length; i++) {
-            r[i] = value & ((1 << sizes[i]) - 1);
-            value >>>= sizes[i];
-        }
-        return r;
+    public static int unpack(int value, int pos, int size) {
+        return (value >>> pos) & ((1 << size) - 1);
     }
 
     public static class IntegerConverter implements IntConverter<Integer> {
@@ -50,7 +40,6 @@ public interface IntConverter<T> {
 
     public static class Vec2dConverter implements IntConverter<Vec2d> {
 
-        private static final int[] SIZES = {16, 16};
         private static final double C = (1 << 16) - 1;
 
         @Override
@@ -58,8 +47,9 @@ public interface IntConverter<T> {
             if (i == C) {
                 return null;
             }
-            int[] values = unpack(SIZES, i);
-            return new Vec2d(values[0] / C, values[1] / C);
+            int x = unpack(i, 0, 16);
+            int y = unpack(i, 16, 16);
+            return new Vec2d(x / C, y / C);
         }
 
         @Override
@@ -67,14 +57,14 @@ public interface IntConverter<T> {
             if (t == null) {
                 return (int) C;
             }
-            t = t.clamp(0, 1);
-            return pack(SIZES, round(t.x * C), round(t.y * C));
+            int x = round(clamp(t.x, 0, 1) * C);
+            int y = round(clamp(t.y, 0, 1) * C);
+            return pack(x, 0, 16) + pack(y, 16, 16);
         }
     }
 
     public static class Vec3dConverter implements IntConverter<Vec3d> {
 
-        private static final int[] SIZES = {10, 10, 10};
         private static final double C = (1 << 10) - 1;
 
         @Override
@@ -82,8 +72,10 @@ public interface IntConverter<T> {
             if (i == -1) {
                 return null;
             }
-            int[] values = unpack(SIZES, i);
-            return new Vec3d(values[0] / C, values[1] / C, values[2] / C);
+            int x = unpack(i, 0, 10);
+            int y = unpack(i, 10, 10);
+            int z = unpack(i, 20, 10);
+            return new Vec3d(x / C, y / C, z / C);
         }
 
         @Override
@@ -91,8 +83,10 @@ public interface IntConverter<T> {
             if (t == null) {
                 return -1;
             }
-            t = t.clamp(0, 1);
-            return pack(SIZES, round(t.x * C), round(t.y * C), round(t.z * C));
+            int x = round(clamp(t.x, 0, 1) * C);
+            int y = round(clamp(t.y, 0, 1) * C);
+            int z = round(clamp(t.z, 0, 1) * C);
+            return pack(x, 0, 10) + pack(y, 10, 10) + pack(z, 20, 10);
         }
     }
 }
