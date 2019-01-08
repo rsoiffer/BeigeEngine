@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.BiFunction;
 import org.joml.Matrix4d;
+import org.joml.Vector4d;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_POINTS;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
@@ -27,7 +28,6 @@ import util.math.Vec2d;
 import util.math.Vec3d;
 import util.math.Vec4d;
 import util.rlestorage.RLEColumn;
-import util.rlestorage.RLEStorage;
 
 public class VoxelRenderer<T> {
 
@@ -41,6 +41,8 @@ public class VoxelRenderer<T> {
     private final Map<Vec3d, Integer> numQuadsMap = new HashMap();
     private final Map<Vec3d, VertexArrayObject> vaoMap = new HashMap();
     private final Map<Vec3d, BufferObject> vboMap = new HashMap();
+    private final Vec3d max, min;
+    private int vboMapsFinished;
 
     public VoxelRenderer(VoxelRendererParams<T> params) {
         this.params = params;
@@ -58,6 +60,12 @@ public class VoxelRenderer<T> {
             }
             generateExposedFaces(floor(v.x), floor(v.y), quads.get(new Vec3d(0, 0, -1)), quads.get(new Vec3d(0, 0, 1)));
         }
+        max = new Vec3d(quads.values().stream().flatMap(List::stream).mapToInt(vfi -> vfi.x).max().getAsInt() + 1,
+                quads.values().stream().flatMap(List::stream).mapToInt(vfi -> vfi.y).max().getAsInt() + 1,
+                quads.values().stream().flatMap(List::stream).mapToInt(vfi -> vfi.z).max().getAsInt() + 1);
+        min = new Vec3d(quads.values().stream().flatMap(List::stream).mapToInt(vfi -> vfi.x).min().getAsInt(),
+                quads.values().stream().flatMap(List::stream).mapToInt(vfi -> vfi.y).min().getAsInt(),
+                quads.values().stream().flatMap(List::stream).mapToInt(vfi -> vfi.z).min().getAsInt());
 
         for (Vec3d dir : DIRS) {
             numQuadsMap.put(dir, quads.get(dir).size());
@@ -76,6 +84,7 @@ public class VoxelRenderer<T> {
                 }
                 vboMap.get(dir).bind();
                 vboMap.get(dir).putData(vertices);
+                vboMapsFinished++;
             } else {
                 // Workaround for threading issues
                 Core.onMainThread(() -> {
@@ -84,6 +93,7 @@ public class VoxelRenderer<T> {
                     }
                     vboMap.get(dir).bind();
                     vboMap.get(dir).putData(vertices);
+                    vboMapsFinished++;
                 });
             }
         }
@@ -96,7 +106,7 @@ public class VoxelRenderer<T> {
     }
 
     private Iterator<Entry<Integer, T>> columnIterator(int x, int y) {
-        RLEColumn<T> r = params.voxels.columnAt(x, y);
+        RLEColumn<T> r = params.columnAt.apply(x, y);
         return (r == null ? new ArrayList() : r).iterator();
     }
 
@@ -155,32 +165,40 @@ public class VoxelRenderer<T> {
         }
     }
 
-    public void render(Transformation t, Vec4d color) {
-        if (vaoMap.isEmpty()) {
-            for (Vec3d dir : DIRS) {
-                vaoMap.put(dir, VertexArrayObject.createVAO(() -> {
-                    vboMap.get(dir).bind();
-                    int total = 0;
-                    for (int i = 0; i < params.vertexAttribSizes.size(); i++) {
-                        glVertexAttribPointer(i, params.vertexAttribSizes.get(i), GL_FLOAT, false, vertexSize * 4, total * 4);
-                        glEnableVertexAttribArray(i);
-                        total += params.vertexAttribSizes.get(i);
-                    }
-                }));
-            }
-        }
+    private boolean intersectsFrustum() {
+        return Camera.camera3d.getViewFrustum().testAab((float) min.x, (float) min.y, (float) min.z, (float) max.x, (float) max.y, (float) max.z);
+    }
 
-        Matrix4d worldMat = Camera.camera3d.worldMatrix(t.modelMatrix());
-        params.shader.setMVP(t);
-        params.shader.setUniform("color", color);
-        for (Vec3d dir : DIRS) {
-//            Vector4d newDir = new Vector4d(dir.x, dir.y, dir.z, 0).mul(worldMat);
-//            boolean check = new Vector4d(min().x, min().y, min().z, 1).mul(worldMat).dot(newDir) < 0
-//                    || new Vector4d(max().x, max().y, max().z, 1).mul(worldMat).dot(newDir) < 0;
-//            if (check) {
-            vaoMap.get(dir).bind();
-            glDrawArrays(GL_POINTS, 0, numQuadsMap.get(dir));
-//            }
+    public void render(Transformation t, Vec4d color) {
+        if (vboMapsFinished == 6) {
+            if (vaoMap.isEmpty()) {
+                for (Vec3d dir : DIRS) {
+                    vaoMap.put(dir, VertexArrayObject.createVAO(() -> {
+                        vboMap.get(dir).bind();
+                        int total = 0;
+                        for (int i = 0; i < params.vertexAttribSizes.size(); i++) {
+                            glVertexAttribPointer(i, params.vertexAttribSizes.get(i), GL_FLOAT, false, vertexSize * 4, total * 4);
+                            glEnableVertexAttribArray(i);
+                            total += params.vertexAttribSizes.get(i);
+                        }
+                    }));
+                }
+            }
+
+            if (intersectsFrustum()) {
+                Matrix4d worldMat = Camera.camera3d.worldMatrix(t.modelMatrix());
+                params.shader.setMVP(t);
+                params.shader.setUniform("color", color);
+                for (Vec3d dir : DIRS) {
+                    Vector4d newDir = new Vector4d(dir.x, dir.y, dir.z, 0).mul(worldMat);
+                    boolean check = new Vector4d(min.x, min.y, min.z, 1).mul(worldMat).dot(newDir) < 0
+                            || new Vector4d(max.x, max.y, max.z, 1).mul(worldMat).dot(newDir) < 0;
+                    if (check) {
+                        vaoMap.get(dir).bind();
+                        glDrawArrays(GL_POINTS, 0, numQuadsMap.get(dir));
+                    }
+                }
+            }
         }
     }
 
@@ -225,7 +243,8 @@ public class VoxelRenderer<T> {
         public List<Vec2d> columnsToDraw;
         public ShaderProgram shader;
         public List<Integer> vertexAttribSizes;
-        public RLEStorage<T> voxels;
+        //public RLEStorage<T> voxels;
+        public BiFunction<Integer, Integer, RLEColumn<T>> columnAt;
         public BiFunction<VoxelFaceInfo<T>, Vec3d, float[]> voxelFaceToData;
     }
 }

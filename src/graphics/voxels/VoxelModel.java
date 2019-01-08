@@ -90,7 +90,7 @@ public class VoxelModel {
         params.columnsToDraw = colors.allColumns().map(c -> new Vec2d(c.x, c.y)).collect(Collectors.toList());
         params.shader = MODEL_SHADER;
         params.vertexAttribSizes = Arrays.asList(3, 1, 3, 4);
-        params.voxels = colors;
+        params.columnAt = colors::columnAt;
         params.voxelFaceToData = (vfi, dir) -> {
             int normal = DIRS.indexOf(dir);
             int colorHex = finalColorPalette[vfi.voxel];

@@ -121,6 +121,12 @@ public class ShaderProgram extends GLObject {
         glUniform1i(uniform, value);
     }
 
+    public void setUniform(String name, float value) {
+        bind();
+        int uniform = getUniformLocation(name);
+        glUniform1f(uniform, value);
+    }
+
     public void setUniform(String name, Vec2d value) {
         bind();
         int uniform = getUniformLocation(name);
