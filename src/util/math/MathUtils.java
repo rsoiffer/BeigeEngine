@@ -103,9 +103,9 @@ public abstract class MathUtils {
         }
     }
 
-    public static Vec3d randomInSphere() {
+    public static Vec3d randomInSphere(Random random) {
         while (true) {
-            Vec3d v = new Vec3d(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1);
+            Vec3d v = new Vec3d(random.nextDouble() * 2 - 1, random.nextDouble() * 2 - 1, random.nextDouble() * 2 - 1);
             if (v.lengthSquared() <= 1) {
                 return v;
             }
