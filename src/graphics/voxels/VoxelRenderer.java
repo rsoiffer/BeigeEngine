@@ -194,6 +194,7 @@ public class VoxelRenderer<T> {
                     boolean check = new Vector4d(min.x, min.y, min.z, 1).mul(worldMat).dot(newDir) < 0
                             || new Vector4d(max.x, max.y, max.z, 1).mul(worldMat).dot(newDir) < 0;
                     if (check) {
+                        params.shader.setUniform("normal", DIRS.indexOf(dir));
                         vaoMap.get(dir).bind();
                         glDrawArrays(GL_POINTS, 0, numQuadsMap.get(dir));
                     }
