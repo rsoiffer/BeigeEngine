@@ -84,6 +84,10 @@ public class Vec2d {
         return mul(1 - amt).add(other.mul(amt));
     }
 
+    public Vec2d lerp(Vec2d other, Vec2d amt) {
+        return mul(new Vec2d(1, 1).sub(amt)).add(other.mul(amt));
+    }
+
     public Vec2d mul(double a) {
         return new Vec2d(x * a, y * a);
     }

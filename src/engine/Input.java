@@ -1,7 +1,8 @@
 package engine;
 
-import java.util.BitSet;
+import graphics.Camera;
 import graphics.Window;
+import java.util.BitSet;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 import util.math.Vec2d;
 
@@ -9,7 +10,7 @@ public abstract class Input {
 
     static void init() {
         Window.window.setCursorPosCallback((window, xpos, ypos) -> {
-            mouse = new Vec2d(xpos, ypos);
+            mouse = new Vec2d(xpos / Window.WIDTH, 1 - ypos / Window.HEIGHT);
         });
         Window.window.setKeyCallback((window, key, scancode, action, mods) -> {
             if (key >= 0) {
@@ -55,11 +56,11 @@ public abstract class Input {
     }
 
     public static Vec2d mouse() {
-        return mouse;
+        return Camera.camera2d.toWorldCoords(mouse);
     }
 
     public static Vec2d mouseDelta() {
-        return mouse.sub(prevMouse);
+        return Camera.camera2d.toWorldCoords(mouse.sub(prevMouse));
     }
 
     public static boolean mouseDown(int button) {

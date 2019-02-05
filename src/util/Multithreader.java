@@ -1,17 +1,18 @@
 package util;
 
-import game.Settings;
+import graphics.Window;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import graphics.Window;
 
 public abstract class Multithreader {
+
+    public static final boolean MULTITHREADED_OPENGL = false;
 
     private static final int NUM_THREADS = 3;
     private static final int TIMEOUT = 60;
     private static final ThreadPoolExecutor THREAD_POOL = new ThreadPoolExecutor(NUM_THREADS, NUM_THREADS, TIMEOUT, TimeUnit.SECONDS, new LinkedBlockingQueue(), r -> {
-        if (Settings.MULTITHREADED_OPENGL) {
+        if (MULTITHREADED_OPENGL) {
             Window w = new Window(false);
             Thread t = new Thread(() -> {
                 w.createContext();

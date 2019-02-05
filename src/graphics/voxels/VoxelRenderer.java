@@ -1,7 +1,6 @@
 package graphics.voxels;
 
 import engine.Core;
-import static game.Settings.MULTITHREADED_OPENGL;
 import graphics.Camera;
 import graphics.opengl.BufferObject;
 import graphics.opengl.ShaderProgram;
@@ -22,6 +21,7 @@ import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static util.Multithreader.MULTITHREADED_OPENGL;
 import static util.math.MathUtils.floor;
 import util.math.Transformation;
 import util.math.Vec2d;

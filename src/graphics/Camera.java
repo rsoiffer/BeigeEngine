@@ -30,12 +30,12 @@ public abstract class Camera {
 
     public static class Camera2d extends Camera {
 
-        public Vec2d position = new Vec2d(0, 0);
-        public double rotation = 0;
-        public double zoom = 1;
-
         public Vec2d lowerLeft = new Vec2d(0, 0);
         public Vec2d upperRight = new Vec2d(1, 1);
+
+        public Vec2d getCenter() {
+            return lowerLeft.lerp(upperRight, .5);
+        }
 
         @Override
         public Matrix4d projectionMatrix() {
@@ -44,12 +44,21 @@ public abstract class Camera {
             return projectionMatrix;
         }
 
+        public void setCenterSize(Vec2d center, Vec2d size) {
+            lowerLeft = center.sub(size.mul(.5));
+            upperRight = center.add(size.mul(.5));
+        }
+
+        public Vec2d toWorldCoords(Vec2d screenPos) {
+            return lowerLeft.lerp(upperRight, screenPos);
+        }
+
         @Override
         public Matrix4d viewMatrix() {
-            return new Matrix4d()
-                    .scale(zoom)
-                    .rotate(rotation, 0, 0, 1)
-                    .translate(new Vector3d(-position.x, -position.y, 0));
+            return new Matrix4d();
+//            return new Matrix4d()
+//                    .scale(zoom)
+//                    .translate(new Vector3d(-position.x, -position.y, 0));
         }
     }
 
