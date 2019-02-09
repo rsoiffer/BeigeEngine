@@ -45,7 +45,7 @@ public final class Layer implements Comparable<Layer> {
         }.create();
     }
 
-    void stepAll() {
+    public void stepAll() {
         new LinkedList<>(behaviors).forEach(Behavior::step);
     }
 }

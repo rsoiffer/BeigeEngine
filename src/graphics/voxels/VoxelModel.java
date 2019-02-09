@@ -89,7 +89,7 @@ public class VoxelModel {
         VoxelRendererParams<Integer> params = new VoxelRendererParams();
         params.columnsToDraw = colors.allColumns().map(c -> new Vec2d(c.x, c.y)).collect(Collectors.toList());
         params.shader = MODEL_SHADER;
-        params.vertexAttribSizes = Arrays.asList(3, 1, 3, 4);
+        params.vertexAttribSizes = Arrays.asList(3, 3, 4);
         params.columnAt = colors::columnAt;
         params.voxelFaceToData = (vfi, dir) -> {
             int normal = DIRS.indexOf(dir);
@@ -99,7 +99,6 @@ public class VoxelModel {
             float b = mod(colorHex >> 16, 256) / 255.f;
             return new float[]{
                 vfi.x, vfi.y, vfi.z,
-                normal,
                 r, g, b,
                 1, 1, 1, 1
             };

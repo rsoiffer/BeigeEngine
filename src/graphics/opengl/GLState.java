@@ -1,5 +1,6 @@
 package graphics.opengl;
 
+import java.awt.Window;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -8,6 +9,7 @@ import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
@@ -39,6 +41,8 @@ public class GLState {
         if (framebuffer != state.framebuffer) {
             state.framebuffer = framebuffer;
             glBindFramebuffer(GL_FRAMEBUFFER, framebuffer == null ? 0 : framebuffer.id);
+            glViewport(0, 0, framebuffer == null ? Window.WIDTH : framebuffer.width,
+                    framebuffer == null ? Window.HEIGHT : framebuffer.height);
         }
     }
 

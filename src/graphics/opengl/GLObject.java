@@ -2,7 +2,7 @@ package graphics.opengl;
 
 public abstract class GLObject {
 
-    final int id;
+    public final int id;
 
     public GLObject(int id) {
         this.id = id;

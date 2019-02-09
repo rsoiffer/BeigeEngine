@@ -56,9 +56,6 @@ public abstract class Camera {
         @Override
         public Matrix4d viewMatrix() {
             return new Matrix4d();
-//            return new Matrix4d()
-//                    .scale(zoom)
-//                    .translate(new Vector3d(-position.x, -position.y, 0));
         }
     }
 

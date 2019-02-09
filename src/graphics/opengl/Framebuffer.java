@@ -21,7 +21,6 @@ import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
-import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT1;
 import static org.lwjgl.opengl.GL30.GL_DEPTH24_STENCIL8;
 import static org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL;
 import static org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL_ATTACHMENT;
@@ -47,34 +46,38 @@ public class Framebuffer extends GLObject {
         glEnableVertexAttribArray(1);
     });
 
-    public final Texture colorBuffer;
-    public final Texture colorBuffer2;
-    public final Texture depthStencilBuffer;
+    public final int width, height;
+    public Texture colorBuffer, depthStencilBuffer;
 
-    public Framebuffer(boolean useColorBuffer, boolean useColorBuffer2, boolean useDepthStencilBuffer) {
+    public Framebuffer(int width, int height) {
         super(glGenFramebuffers());
-        Framebuffer oldFramebuffer = GLState.getFramebuffer();
+        this.width = width;
+        this.height = height;
+    }
+
+    public Framebuffer() {
+        this(Window.WIDTH, Window.HEIGHT);
+    }
+
+    public Framebuffer attachColorBuffer() {
+        colorBuffer = attachTexture(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, GL_COLOR_ATTACHMENT0);
+        return this;
+    }
+
+    public Framebuffer attachDepthStencilBuffer() {
+        depthStencilBuffer = attachTexture(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, GL_DEPTH_STENCIL_ATTACHMENT);
+        return this;
+    }
+
+    private Texture attachTexture(int gpuFormat, int storageType, int cpuFormat, int attachmentType) {
         bind();
-
-        if (useColorBuffer) {
-            colorBuffer = fullscreenTexture(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, GL_COLOR_ATTACHMENT0);
-        } else {
-            colorBuffer = null;
-        }
-
-        if (useColorBuffer2) {
-            colorBuffer2 = fullscreenTexture(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, GL_COLOR_ATTACHMENT1);
-        } else {
-            colorBuffer2 = null;
-        }
-
-        if (useDepthStencilBuffer) {
-            depthStencilBuffer = fullscreenTexture(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, GL_DEPTH_STENCIL_ATTACHMENT);
-        } else {
-            depthStencilBuffer = null;
-        }
-
-        GLState.bindFramebuffer(oldFramebuffer);
+        Texture t = new Texture(GL_TEXTURE_2D);
+        t.bind();
+        glTexImage2D(GL_TEXTURE_2D, 0, gpuFormat, width, height, 0, storageType, cpuFormat, 0);
+        t.setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        t.setParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D, t.id, 0);
+        return t;
     }
 
     @Override
@@ -108,15 +111,5 @@ public class Framebuffer extends GLObject {
         GLState.bindFramebuffer(null);
         bindAll(texture, shader, FRAMEBUFFER_VAO);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-    }
-
-    private static Texture fullscreenTexture(int gpuFormat, int storageType, int cpuFormat, int attachmentType) {
-        Texture t = new Texture(GL_TEXTURE_2D);
-        t.bind();
-        glTexImage2D(GL_TEXTURE_2D, 0, gpuFormat, Window.WIDTH, Window.HEIGHT, 0, storageType, cpuFormat, 0);
-        t.setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        t.setParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D, t.id, 0);
-        return t;
     }
 }

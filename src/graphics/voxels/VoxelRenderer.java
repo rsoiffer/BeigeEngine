@@ -166,7 +166,8 @@ public class VoxelRenderer<T> {
     }
 
     private boolean intersectsFrustum() {
-        return Camera.camera3d.getViewFrustum().testAab((float) min.x, (float) min.y, (float) min.z, (float) max.x, (float) max.y, (float) max.z);
+        return true;
+//        return Camera.camera3d.getViewFrustum().testAab((float) min.x, (float) min.y, (float) min.z, (float) max.x, (float) max.y, (float) max.z);
     }
 
     public void render(Transformation t, Vec4d color) {
@@ -186,14 +187,14 @@ public class VoxelRenderer<T> {
             }
 
             if (intersectsFrustum()) {
-                Matrix4d worldMat = Camera.camera3d.worldMatrix(t.modelMatrix());
+                Matrix4d worldMat = Camera.current.worldMatrix(t.modelMatrix());
                 params.shader.setMVP(t);
                 params.shader.setUniform("color", color);
                 for (Vec3d dir : DIRS) {
                     Vector4d newDir = new Vector4d(dir.x, dir.y, dir.z, 0).mul(worldMat);
                     boolean check = new Vector4d(min.x, min.y, min.z, 1).mul(worldMat).dot(newDir) < 0
                             || new Vector4d(max.x, max.y, max.z, 1).mul(worldMat).dot(newDir) < 0;
-                    if (check) {
+                    if (check || true) {
                         params.shader.setUniform("normal", DIRS.indexOf(dir));
                         vaoMap.get(dir).bind();
                         glDrawArrays(GL_POINTS, 0, numQuadsMap.get(dir));
@@ -244,7 +245,6 @@ public class VoxelRenderer<T> {
         public List<Vec2d> columnsToDraw;
         public ShaderProgram shader;
         public List<Integer> vertexAttribSizes;
-        //public RLEStorage<T> voxels;
         public BiFunction<Integer, Integer, RLEColumn<T>> columnAt;
         public BiFunction<VoxelFaceInfo<T>, Vec3d, float[]> voxelFaceToData;
     }
