@@ -12,8 +12,8 @@ public class RLEColumn<T> implements Iterable<Entry<Integer, T>> {
 
     /*
     Each element in data is a compressed representation of a paired position
-    and block. The position occupies the lower 16 bits of the int, and the
-    block ID occupies the upper 16 bits of the int.
+    and block. The position occupies the lower 32 bits of the long, and the
+    block ID occupies the upper 32 bits of the long.
      */
     private long[] data = {};
     private final IntConverter<T> ic;
