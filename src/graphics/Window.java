@@ -18,7 +18,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class Window {
 
     public static final int ANTI_ALIASING = 1; // Scale from 1 - 16
-    public static final boolean SHOW_OPENGL_DEBUG_INFO = false;
+    public static final boolean SHOW_OPENGL_DEBUG_INFO = true;
 
     public static final int WIDTH = 1600;
     public static final int HEIGHT = 900;

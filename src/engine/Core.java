@@ -52,6 +52,15 @@ public abstract class Core {
 
             long time = System.nanoTime();
             dt = Math.min((time - prevTime) / 1e9, .1);
+            while (dt < 1e-3) {
+                try {
+                    Thread.sleep(0, 100);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+                time = System.nanoTime();
+                dt = Math.min((time - prevTime) / 1e9, .1);
+            }
             prevTime = time;
 
             clearToRun().forEach(r -> r.run());

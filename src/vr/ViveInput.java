@@ -86,8 +86,7 @@ public class ViveInput {
         }
 
         public Vec3d forwards() {
-            Vector4d forwards = new Vector4d(1, 0, 0, 0).mul(pose());
-            return new Vec3d(forwards.x, forwards.y, forwards.z);
+            return transform(new Vec3d(1, 0, -.5));
         }
 
         public Matrix4d pose() {
@@ -103,6 +102,10 @@ public class ViveInput {
             return new Matrix4d(COORD_CHANGE).invert().mul(prevPose).mul(COORD_CHANGE);
         }
 
+        public Vec3d sideways() {
+            return transform(new Vec3d(0, 1, 0));
+        }
+
         @Override
         public String toString() {
             return "ViveController{" + "id=" + id + ", axes=" + axes + ", buttons=" + buttons + ", prevAxes=" + prevAxes + ", prevButtons=" + prevButtons + ", pose=" + pose + '}';
@@ -110,6 +113,11 @@ public class ViveInput {
 
         public Vec2d trackpad() {
             return axes.get(0);
+        }
+
+        public Vec3d transform(Vec3d dir) {
+            Vector4d v = new Vector4d(dir.x, dir.y, dir.z, 0).mul(pose());
+            return new Vec3d(v.x, v.y, v.z).normalize();
         }
 
         public double trigger() {

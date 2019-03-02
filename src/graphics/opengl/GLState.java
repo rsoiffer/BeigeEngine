@@ -1,6 +1,6 @@
 package graphics.opengl;
 
-import java.awt.Window;
+import graphics.Window;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;

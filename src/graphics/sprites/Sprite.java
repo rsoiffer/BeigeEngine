@@ -51,6 +51,10 @@ public class Sprite {
     }
 
     public void draw(Transformation t, Color color) {
+        drawTexture(texture, t, color);
+    }
+
+    public static void drawTexture(Texture texture, Transformation t, Color color) {
         SPRITE_SHADER.setMVP(t);
         SPRITE_SHADER.setUniform("color", color);
         bindAll(texture, SPRITE_SHADER, SPRITE_VAO);

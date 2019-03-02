@@ -30,6 +30,7 @@ import static vr.ViveInput.RIGHT;
 public class Vive {
 
     public static double SCALE_FACTOR = 1;
+    public static Framebuffer leftEye, rightEye;
 
     public static void main(String[] args) {
         init();
@@ -128,8 +129,8 @@ public class Vive {
 
     public static void initRender(Vec4d clearColor) {
         Vec2d texSize = Vive.getRecommendedRenderTargetSize();
-        Framebuffer leftEye = new Framebuffer((int) texSize.x, (int) texSize.y).attachColorBuffer().attachDepthStencilBuffer();
-        Framebuffer rightEye = new Framebuffer((int) texSize.x, (int) texSize.y).attachColorBuffer().attachDepthStencilBuffer();
+        leftEye = new Framebuffer((int) texSize.x, (int) texSize.y).attachColorBuffer().attachDepthStencilBuffer();
+        rightEye = new Framebuffer((int) texSize.x, (int) texSize.y).attachColorBuffer().attachDepthStencilBuffer();
 
         POSTRENDER.onStep(() -> {
             Matrix4d tPose = Vive.waitGetPoses();
@@ -139,12 +140,12 @@ public class Vive {
             leftEye.clear(clearColor);
             Camera.current = Vive.eyeCamera(true, tPose);
             RENDER3D.stepAll();
-            Vive.submit(true, leftEye.colorBuffer.id);
+            submit(true, leftEye.colorBuffer.id);
 
             rightEye.clear(clearColor);
             Camera.current = Vive.eyeCamera(false, tPose);
             RENDER3D.stepAll();
-            Vive.submit(false, rightEye.colorBuffer.id);
+            submit(false, rightEye.colorBuffer.id);
 
             Camera.current = Camera.camera3d;
         });
