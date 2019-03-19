@@ -60,14 +60,12 @@ public class Texture extends GLObject {
         }
 
         Texture t = new Texture(GL_TEXTURE_2D);
-        t.setParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        t.setParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
         t.setParameter(GL_TEXTURE_MAX_LEVEL, 4);
         t.uploadData(widthArray[0], heightArray[0], image);
         return t;
     }
 
-    void setParameter(int name, int value) {
+    public void setParameter(int name, int value) {
         bind();
         glTexParameteri(type, name, value);
     }

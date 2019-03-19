@@ -6,6 +6,8 @@ import org.joml.Vector4d;
 
 public class Transformation {
 
+    public static final Transformation IDENTITY = new Transformation(new Matrix4d());
+
     private final Matrix4d m;
 
     public Transformation(Matrix4d m) {
@@ -48,7 +50,7 @@ public class Transformation {
     }
 
     public Matrix4d modelMatrix() {
-        return m;
+        return new Matrix4d(m);
     }
 
     public Transformation translate(Vec3d offset) {
