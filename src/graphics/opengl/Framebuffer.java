@@ -3,6 +3,7 @@ package graphics.opengl;
 import graphics.Window;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_COMPONENT;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_RGBA;
@@ -22,18 +23,24 @@ import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
 import static org.lwjgl.opengl.GL30.GL_DEPTH24_STENCIL8;
+import static org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT;
 import static org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL;
 import static org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL_ATTACHMENT;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
+import static org.lwjgl.opengl.GL30.GL_RENDERBUFFER;
 import static org.lwjgl.opengl.GL30.GL_UNSIGNED_INT_24_8;
+import static org.lwjgl.opengl.GL30.glBindRenderbuffer;
 import static org.lwjgl.opengl.GL30.glDeleteFramebuffers;
+import static org.lwjgl.opengl.GL30.glFramebufferRenderbuffer;
 import static org.lwjgl.opengl.GL30.glFramebufferTexture2D;
 import static org.lwjgl.opengl.GL30.glGenFramebuffers;
+import static org.lwjgl.opengl.GL30.glGenRenderbuffers;
+import static org.lwjgl.opengl.GL30.glRenderbufferStorage;
 import util.math.Vec4d;
 
 public class Framebuffer extends GLObject {
 
-    private static final VertexArrayObject FRAMEBUFFER_VAO = VertexArrayObject.createVAO(() -> {
+    public static final VertexArrayObject FRAMEBUFFER_VAO = VertexArrayObject.createVAO(() -> {
         BufferObject vbo = new BufferObject(GL_ARRAY_BUFFER, new float[]{
             -1, -1, 0, 0,
             1, -1, 1, 0,
@@ -60,22 +67,29 @@ public class Framebuffer extends GLObject {
     }
 
     public Framebuffer attachColorBuffer() {
-        colorBuffer = attachTexture(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, GL_COLOR_ATTACHMENT0);
+        colorBuffer = attachTexture(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, GL_LINEAR, GL_COLOR_ATTACHMENT0);
         return this;
+    }
+
+    public void attachDepthRenderbuffer() {
+        int rboDepth = glGenRenderbuffers();
+        glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
     }
 
     public Framebuffer attachDepthStencilBuffer() {
-        depthStencilBuffer = attachTexture(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, GL_DEPTH_STENCIL_ATTACHMENT);
+        depthStencilBuffer = attachTexture(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, GL_LINEAR, GL_DEPTH_STENCIL_ATTACHMENT);
         return this;
     }
 
-    private Texture attachTexture(int gpuFormat, int storageType, int cpuFormat, int attachmentType) {
+    public Texture attachTexture(int gpuFormat, int storageType, int cpuFormat, int filterType, int attachmentType) {
         bind();
         Texture t = new Texture(GL_TEXTURE_2D);
         t.bind();
         glTexImage2D(GL_TEXTURE_2D, 0, gpuFormat, width, height, 0, storageType, cpuFormat, 0);
-        t.setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        t.setParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        t.setParameter(GL_TEXTURE_MIN_FILTER, filterType);
+        t.setParameter(GL_TEXTURE_MAG_FILTER, filterType);
         glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D, t.id, 0);
         return t;
     }
