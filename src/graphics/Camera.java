@@ -1,6 +1,5 @@
 package graphics;
 
-import graphics.opengl.ShaderProgram;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4d;
 import org.joml.Matrix4f;
@@ -17,16 +16,7 @@ public abstract class Camera {
 
     public abstract Matrix4d projectionMatrix();
 
-    public void setShaderMatrices(ShaderProgram shader, Matrix4d modelMatrix) {
-        shader.setUniform("projectionMatrix", projectionMatrix());
-        shader.setUniform("modelViewMatrix", worldMatrix(modelMatrix));
-    }
-
     public abstract Matrix4d viewMatrix();
-
-    public Matrix4d worldMatrix(Matrix4d modelMatrix) {
-        return viewMatrix().mul(modelMatrix);
-    }
 
     public static class Camera2d extends Camera {
 

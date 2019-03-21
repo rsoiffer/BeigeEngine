@@ -3,7 +3,7 @@ package graphics.sprites;
 import graphics.Color;
 import graphics.opengl.BufferObject;
 import static graphics.opengl.GLObject.bindAll;
-import graphics.opengl.ShaderProgram;
+import graphics.opengl.Shader;
 import graphics.opengl.Texture;
 import graphics.opengl.VertexArrayObject;
 import java.util.HashMap;
@@ -14,7 +14,6 @@ import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import util.Resources;
 import util.math.Transformation;
 
 public class Sprite {
@@ -29,7 +28,7 @@ public class Sprite {
         return SPRITE_CACHE.get(fileName);
     }
 
-    public static final ShaderProgram SPRITE_SHADER = Resources.loadShaderProgram("sprite");
+    public static final Shader SPRITE_SHADER = Shader.load("sprite");
 
     public static final VertexArrayObject SPRITE_VAO = VertexArrayObject.createVAO(() -> {
         BufferObject vbo = new BufferObject(GL_ARRAY_BUFFER, new float[]{

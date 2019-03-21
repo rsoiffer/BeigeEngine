@@ -1,15 +1,13 @@
 package graphics;
 
-import graphics.Color;
 import graphics.opengl.BufferObject;
 import static graphics.opengl.GLObject.bindAll;
-import graphics.opengl.ShaderProgram;
+import graphics.opengl.Shader;
 import graphics.opengl.VertexArrayObject;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import util.Resources;
 import util.math.MathUtils;
 import static util.math.MathUtils.rotate;
 import util.math.Transformation;
@@ -18,7 +16,7 @@ import util.math.Vec3d;
 
 public class Graphics {
 
-    private static final ShaderProgram COLOR_SHADER = Resources.loadShaderProgram("color");
+    private static final Shader COLOR_SHADER = Shader.load("color");
 
     private static final int CIRCLE_DETAIL = 40;
 

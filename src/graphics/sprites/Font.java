@@ -3,7 +3,7 @@ package graphics.sprites;
 import graphics.Color;
 import graphics.opengl.BufferObject;
 import static graphics.opengl.GLObject.bindAll;
-import graphics.opengl.ShaderProgram;
+import graphics.opengl.Shader;
 import graphics.opengl.Texture;
 import graphics.opengl.VertexArrayObject;
 import static java.lang.Integer.parseInt;
@@ -36,7 +36,7 @@ public class Font {
         return FONT_CACHE.get(fileName);
     }
 
-    private static final ShaderProgram FONT_SHADER = Resources.loadShaderProgram("sprite", "font");
+    private static final Shader FONT_SHADER = Shader.load("sprite", "font");
 
     private Texture[] textures;
     private final Map<Integer, FontChar> charMap = new HashMap();

@@ -1,6 +1,6 @@
 package graphics.voxels;
 
-import graphics.opengl.ShaderProgram;
+import graphics.opengl.Shader;
 import static graphics.voxels.VoxelRenderer.DIRS;
 import graphics.voxels.VoxelRenderer.VoxelRendererParams;
 import java.util.Arrays;
@@ -28,7 +28,7 @@ public class VoxelModel {
         return MODEL_CACHE.get(fileName);
     }
 
-    public static final ShaderProgram MODEL_SHADER = Resources.loadShaderProgramGeom("model");
+    public static final Shader MODEL_SHADER = Shader.loadGeom("model");
 
     // Copied from the MagickaVoxel documentation
     private static final int[] DEFAULT_COLOR_PALETTE = {

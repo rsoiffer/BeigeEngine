@@ -3,7 +3,7 @@ package graphics.voxels;
 import engine.Core;
 import graphics.Camera;
 import graphics.opengl.BufferObject;
-import graphics.opengl.ShaderProgram;
+import graphics.opengl.Shader;
 import graphics.opengl.VertexArrayObject;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -187,7 +187,7 @@ public class VoxelRenderer<T> {
             }
 
             if (intersectsFrustum()) {
-                Matrix4d worldMat = Camera.current.worldMatrix(t.modelMatrix());
+                Matrix4d worldMat = Camera.current.viewMatrix().mul(t.modelMatrix());
                 params.shader.setMVP(t);
                 params.shader.setUniform("color", color);
                 for (Vec3d dir : DIRS) {
@@ -243,7 +243,7 @@ public class VoxelRenderer<T> {
     public static class VoxelRendererParams<T> {
 
         public List<Vec2d> columnsToDraw;
-        public ShaderProgram shader;
+        public Shader shader;
         public List<Integer> vertexAttribSizes;
         public BiFunction<Integer, Integer, RLEColumn<T>> columnAt;
         public BiFunction<VoxelFaceInfo<T>, Vec3d, float[]> voxelFaceToData;

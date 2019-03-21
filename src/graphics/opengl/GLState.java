@@ -26,7 +26,7 @@ public class GLState {
     private final Map<Integer, BufferObject> buffers = new HashMap();
     private final Map<Integer, Boolean> flags = new HashMap();
     private Framebuffer framebuffer = null;
-    private ShaderProgram shader = null;
+    private Shader shader = null;
     private Texture texture = null;
     private VertexArrayObject vao = null;
 
@@ -46,7 +46,7 @@ public class GLState {
         }
     }
 
-    public static void bindShaderProgram(ShaderProgram shader) {
+    public static void bindShader(Shader shader) {
         if (shader != state.shader) {
             state.shader = shader;
             glUseProgram(shader == null ? 0 : shader.id);
@@ -107,7 +107,7 @@ public class GLState {
         return state.framebuffer;
     }
 
-    public static ShaderProgram getShaderProgram() {
+    public static Shader getShaderProgram() {
         return state.shader;
     }
 
@@ -132,7 +132,7 @@ public class GLState {
             }
         }
         bindFramebuffer(oldState.framebuffer);
-        bindShaderProgram(oldState.shader);
+        bindShader(oldState.shader);
         bindTexture(oldState.texture);
         bindVertexArrayObject(oldState.vao);
     }

@@ -116,12 +116,12 @@ public class Framebuffer extends GLObject {
         glDeleteFramebuffers(id);
     }
 
-    public void drawToSelf(Texture texture, ShaderProgram shader) {
+    public void drawToSelf(Texture texture, Shader shader) {
         bindAll(this, texture, shader, FRAMEBUFFER_VAO);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     }
 
-    public static void drawToWindow(Texture texture, ShaderProgram shader) {
+    public static void drawToWindow(Texture texture, Shader shader) {
         GLState.bindFramebuffer(null);
         bindAll(texture, shader, FRAMEBUFFER_VAO);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
