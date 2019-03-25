@@ -63,7 +63,7 @@ public class Texture extends GLObject {
         glTexParameterfv(type, name, value);
     }
 
-    private void uploadData(int width, int height, ByteBuffer data) {
+    public void uploadData(int width, int height, ByteBuffer data) {
         this.width = width;
         this.height = height;
         bind();

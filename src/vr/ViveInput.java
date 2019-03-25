@@ -89,6 +89,10 @@ public class ViveInput {
             return transform(new Vec3d(1, 0, -.5));
         }
 
+        public String getPropertyString(int prop) {
+            return VRSystem.VRSystem_GetStringTrackedDeviceProperty(id, prop, null);
+        }
+
         public Matrix4d pose() {
             return new Matrix4d(COORD_CHANGE).invert().mul(pose).mul(COORD_CHANGE);
         }
