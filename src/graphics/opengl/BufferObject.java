@@ -32,12 +32,20 @@ public class BufferObject extends GLObject {
     }
 
     public final void putData(float[] data) {
+        putData(data, GL_STATIC_DRAW);
+    }
+
+    public final void putData(float[] data, int usage) {
         bind();
-        glBufferData(type, data, GL_STATIC_DRAW);
+        glBufferData(type, data, usage);
     }
 
     public final void putData(int[] data) {
+        putData(data, GL_STATIC_DRAW);
+    }
+
+    public final void putData(int[] data, int usage) {
         bind();
-        glBufferData(type, data, GL_STATIC_DRAW);
+        glBufferData(type, data, usage);
     }
 }
