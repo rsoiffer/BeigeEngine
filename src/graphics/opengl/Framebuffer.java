@@ -36,6 +36,7 @@ import static org.lwjgl.opengl.GL30.glFramebufferTexture2D;
 import static org.lwjgl.opengl.GL30.glGenFramebuffers;
 import static org.lwjgl.opengl.GL30.glGenRenderbuffers;
 import static org.lwjgl.opengl.GL30.glRenderbufferStorage;
+import util.math.Vec2d;
 import util.math.Vec4d;
 
 public class Framebuffer extends GLObject {
@@ -60,6 +61,10 @@ public class Framebuffer extends GLObject {
         super(glGenFramebuffers());
         this.width = width;
         this.height = height;
+    }
+
+    public Framebuffer(Vec2d size) {
+        this((int) size.x, (int) size.y);
     }
 
     public Framebuffer() {

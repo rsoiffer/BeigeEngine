@@ -4,6 +4,7 @@ import org.joml.FrustumIntersection;
 import org.joml.Matrix4d;
 import org.joml.Matrix4f;
 import org.joml.Vector3d;
+import org.joml.Vector4d;
 import util.math.Vec2d;
 import util.math.Vec3d;
 
@@ -13,6 +14,11 @@ public abstract class Camera {
     public static final Camera3d camera3d = new Camera3d();
 
     public static Camera current = camera2d;
+
+    public Vec3d getPos() {
+        Vector4d v = new Vector4d(0, 0, 0, 1).mul(viewMatrix().invert());
+        return new Vec3d(v.x, v.y, v.z);
+    }
 
     public abstract Matrix4d projectionMatrix();
 

@@ -140,12 +140,12 @@ public class Vive {
             leftEye.clear(clearColor);
             Camera.current = Vive.eyeCamera(true, tPose);
             RENDER3D.stepAll();
-            submit(true, leftEye.colorBuffer.id);
+            submit(true, leftEye.colorBuffer);
 
             rightEye.clear(clearColor);
             Camera.current = Vive.eyeCamera(false, tPose);
             RENDER3D.stepAll();
-            submit(false, rightEye.colorBuffer.id);
+            submit(false, rightEye.colorBuffer);
 
             Camera.current = Camera.camera3d;
         });
@@ -172,9 +172,9 @@ public class Vive {
         VR.VR_ShutdownInternal();
     }
 
-    public static void submit(boolean leftEye, long textureHandle) {
+    public static void submit(boolean leftEye, graphics.opengl.Texture t) {
         Texture pTexture = Texture.create();
-        pTexture.handle(textureHandle);
+        pTexture.handle(t.id);
         pTexture.eType(VR.ETextureType_TextureType_OpenGL);
         pTexture.eColorSpace(VR.EColorSpace_ColorSpace_Auto);
         VRTextureBounds pBounds = null;
