@@ -1,6 +1,7 @@
 package examples;
 
 import behaviors.FPSBehavior;
+import behaviors.QuitOnEscapeBehavior;
 import behaviors._3d.AccelerationBehavior3d;
 import behaviors._3d.ModelBehavior;
 import behaviors._3d.PositionBehavior3d;
@@ -8,20 +9,17 @@ import engine.Behavior;
 import static engine.Behavior.track;
 import engine.Core;
 import static engine.Core.dt;
-import engine.Input;
-import static engine.Layer.PREUPDATE;
 import static engine.Layer.RENDER3D;
 import static engine.Layer.UPDATE;
+import engine.Settings;
 import graphics.Camera;
 import graphics.Color;
-import graphics.opengl.Framebuffer;
 import graphics.voxels.VoxelModel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import org.joml.Matrix4d;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import util.math.MathUtils;
 import util.math.Transformation;
 import util.math.Vec3d;
@@ -37,22 +35,16 @@ public class FireballsVR {
     public static List<Fireball> grabbed = new ArrayList();
 
     public static void main(String[] args) {
+        Settings.BACKGROUND_COLOR = new Color(.4, .7, 1, 1);
         Core.init();
 
         new FPSBehavior().create();
+        new QuitOnEscapeBehavior().create();
         Camera.current = Camera.camera3d;
-        Vec4d clearColor = new Vec4d(.4, .7, 1, 1);
         Vive.init();
-        Vive.initRender(clearColor);
-
-        PREUPDATE.onStep(() -> {
-            Framebuffer.clearWindow(clearColor);
-        });
+        Vive.initRender(new Vec4d(.4, .7, 1, 1));
 
         UPDATE.onStep(() -> {
-            if (Input.keyJustPressed(GLFW_KEY_ESCAPE)) {
-                Core.stopGame();
-            }
             ViveInput.update();
             if (ViveInput.LEFT.buttonDown(MENU) && ViveInput.RIGHT.buttonDown(MENU)) {
                 ViveInput.resetRightLeft();

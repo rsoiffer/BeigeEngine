@@ -1,13 +1,12 @@
 package util;
 
+import static engine.Settings.MULTITHREADED_OPENGL;
 import graphics.Window;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public abstract class Multithreader {
-
-    public static final boolean MULTITHREADED_OPENGL = false;
 
     private static final int NUM_THREADS = 3;
     private static final int TIMEOUT = 60;

@@ -1,6 +1,6 @@
 package graphics.opengl;
 
-import graphics.Window;
+import engine.Settings;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_COMPONENT;
@@ -68,7 +68,7 @@ public class Framebuffer extends GLObject {
     }
 
     public Framebuffer() {
-        this(Window.WIDTH, Window.HEIGHT);
+        this(Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT);
     }
 
     public Framebuffer attachColorBuffer() {

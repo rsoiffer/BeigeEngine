@@ -1,5 +1,6 @@
 package graphics;
 
+import engine.Settings;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4d;
 import org.joml.Matrix4f;
@@ -71,7 +72,7 @@ public abstract class Camera {
 
         @Override
         public Matrix4d projectionMatrix() {
-            double aspectRatio = (double) Window.WIDTH / Window.HEIGHT;
+            double aspectRatio = (double) Settings.WINDOW_WIDTH / Settings.WINDOW_HEIGHT;
             Matrix4d projectionMatrix = new Matrix4d();
             projectionMatrix.perspective(fov * Math.PI / 180, aspectRatio, zNear, zFar);
             return projectionMatrix;

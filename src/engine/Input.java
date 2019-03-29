@@ -10,7 +10,7 @@ public abstract class Input {
 
     static void init() {
         Window.window.setCursorPosCallback((window, xpos, ypos) -> {
-            mouse = new Vec2d(xpos / Window.WIDTH, 1 - ypos / Window.HEIGHT);
+            mouse = new Vec2d(xpos / Settings.WINDOW_WIDTH, 1 - ypos / Settings.WINDOW_HEIGHT);
         });
         Window.window.setKeyCallback((window, key, scancode, action, mods) -> {
             if (key >= 0) {

@@ -1,16 +1,17 @@
 #version 330
 
+in vec2 TexCoords;
+
+out vec4 FragColor;
+
 uniform vec4 color;
 uniform bool outline;
-uniform sampler2D texture_sampler;
-
-in  vec2 texCoord;
-out vec4 finalColor;
+uniform sampler2D tex;
 
 void main() {
     if (outline) {
-        finalColor = color * vec4(1, 1, 1, texture(texture_sampler, texCoord).a);
+        FragColor = color * vec4(1, 1, 1, texture(tex, TexCoords).a);
     } else {
-        finalColor = color * vec4(1, 1, 1, texture(texture_sampler, texCoord).r);
+        FragColor = color * vec4(1, 1, 1, texture(tex, TexCoords).r);
     }
 }

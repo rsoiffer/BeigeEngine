@@ -1,19 +1,16 @@
 package examples;
 
 import behaviors.FPSBehavior;
+import behaviors.QuitOnEscapeBehavior;
 import engine.Core;
 import engine.Input;
-import static engine.Layer.PREUPDATE;
 import static engine.Layer.RENDER2D;
 import static engine.Layer.UPDATE;
 import graphics.Camera;
 import graphics.Color;
 import graphics.Graphics;
-import graphics.Window;
-import graphics.opengl.Framebuffer;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
@@ -23,7 +20,6 @@ import static util.math.MathUtils.floor;
 import static util.math.MathUtils.mod;
 import util.math.Transformation;
 import util.math.Vec2d;
-import util.math.Vec4d;
 
 public class GameOfLife {
 
@@ -39,16 +35,9 @@ public class GameOfLife {
         Core.init();
 
         new FPSBehavior().create();
-        Window.window.setCursorEnabled(true);
-
-        PREUPDATE.onStep(() -> {
-            Framebuffer.clearWindow(new Vec4d(0, 0, 0, 1));
-        });
+        new QuitOnEscapeBehavior().create();
 
         UPDATE.onStep(() -> {
-            if (Input.keyJustPressed(GLFW_KEY_ESCAPE)) {
-                Core.stopGame();
-            }
             double dx = 0, dy = 0;
             if (Input.keyDown(GLFW_KEY_W)) {
                 dy += 1;

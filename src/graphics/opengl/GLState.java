@@ -1,6 +1,6 @@
 package graphics.opengl;
 
-import graphics.Window;
+import engine.Settings;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,8 +41,8 @@ public class GLState {
         if (framebuffer != state.framebuffer) {
             state.framebuffer = framebuffer;
             glBindFramebuffer(GL_FRAMEBUFFER, framebuffer == null ? 0 : framebuffer.id);
-            glViewport(0, 0, framebuffer == null ? Window.WIDTH : framebuffer.width,
-                    framebuffer == null ? Window.HEIGHT : framebuffer.height);
+            glViewport(0, 0, framebuffer == null ? Settings.WINDOW_WIDTH : framebuffer.width,
+                    framebuffer == null ? Settings.WINDOW_HEIGHT : framebuffer.height);
         }
     }
 

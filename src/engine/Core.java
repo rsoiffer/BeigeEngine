@@ -2,6 +2,7 @@ package engine;
 
 import static engine.Layer.ALL_LAYERS;
 import graphics.Window;
+import graphics.opengl.Framebuffer;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -49,17 +50,18 @@ public abstract class Core {
         while (!shouldClose && !Window.window.shouldClose()) {
             Input.nextFrame();
             Window.window.nextFrame();
+            Framebuffer.clearWindow(Settings.BACKGROUND_COLOR);
 
             long time = System.nanoTime();
-            dt = Math.min((time - prevTime) / 1e9, .1);
-            while (dt < 1e-3) {
+            dt = Math.min((time - prevTime) / 1e9, Settings.MAX_FRAME_TIME);
+            while (dt < Settings.MIN_FRAME_TIME) {
                 try {
                     Thread.sleep(0, 100);
                 } catch (InterruptedException ex) {
                     throw new RuntimeException(ex);
                 }
                 time = System.nanoTime();
-                dt = Math.min((time - prevTime) / 1e9, .1);
+                dt = Math.min((time - prevTime) / 1e9, Settings.MAX_FRAME_TIME);
             }
             prevTime = time;
 
