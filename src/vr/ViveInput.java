@@ -94,7 +94,7 @@ public class ViveInput {
         }
 
         public Matrix4d pose() {
-            return new Matrix4d(COORD_CHANGE).invert().mul(pose).mul(COORD_CHANGE);
+            return new Matrix4d(pose);
         }
 
         public Vec3d position() {
@@ -103,7 +103,7 @@ public class ViveInput {
         }
 
         public Matrix4d prevPose() {
-            return new Matrix4d(COORD_CHANGE).invert().mul(prevPose).mul(COORD_CHANGE);
+            return new Matrix4d(prevPose);
         }
 
         public Vec3d sideways() {
@@ -149,6 +149,7 @@ public class ViveInput {
                 }
             }
             pose = read4x3Matrix(tdp.mDeviceToAbsoluteTracking().m());
+            pose = new Matrix4d(COORD_CHANGE).invert().mul(pose).mul(COORD_CHANGE);
         }
     }
 }
