@@ -93,6 +93,10 @@ public class Vec3d {
         return mul(1 - amt).add(other.mul(amt));
     }
 
+    public Vec3d lerp(Vec3d other, Vec3d amt) {
+        return mul(new Vec3d(1, 1, 1).sub(amt)).add(other.mul(amt));
+    }
+
     public Vec3d mul(double a) {
         return new Vec3d(x * a, y * a, z * a);
     }

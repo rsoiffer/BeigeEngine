@@ -1,6 +1,7 @@
 package graphics.opengl;
 
 import java.nio.ByteBuffer;
+import static org.lwjgl.opengl.ARBTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.GL_TEXTURE_MAX_LEVEL;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
@@ -49,6 +50,7 @@ public class Texture extends GLObject {
 
         Texture t = new Texture(GL_TEXTURE_2D);
         t.setParameter(GL_TEXTURE_MAX_LEVEL, 4);
+        t.setParameter(GL_TEXTURE_MAX_ANISOTROPY, 8);
         t.uploadData(widthArray[0], heightArray[0], image);
         return t;
     }
