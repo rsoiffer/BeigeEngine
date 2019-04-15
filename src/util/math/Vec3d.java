@@ -109,6 +109,14 @@ public class Vec3d {
         return div(length());
     }
 
+    public Vec3d projectAgainst(Vec3d v) {
+        return sub(projectOnto(v));
+    }
+
+    public Vec3d projectOnto(Vec3d v) {
+        return v.mul(dot(v) / v.lengthSquared());
+    }
+
     public Vec3d setLength(double l) {
         if (l == 0) {
             return new Vec3d(0, 0, 0);
