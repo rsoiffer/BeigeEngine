@@ -66,7 +66,7 @@ public abstract class Core {
             prevTime = time;
 
             clearToRun().forEach(r -> r.run());
-            ALL_LAYERS.forEach(Layer::stepAll);
+            new LinkedList<>(ALL_LAYERS).forEach(Layer::stepAll);
         }
         Window.cleanupGLFW();
         System.exit(0);

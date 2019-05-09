@@ -53,6 +53,11 @@ public class Transformation {
         return new Matrix4d(m);
     }
 
+    @Override
+    public String toString() {
+        return "Transformation{" + "m=" + m + '}';
+    }
+
     public Transformation translate(Vec3d offset) {
         return new Transformation(m.translate(offset.toJOML(), new Matrix4d()));
     }

@@ -45,18 +45,18 @@ public abstract class GUIItem {
         return center().add(size.div(2));
     }
 
-    protected void onClick() {
+    public void onClick() {
     }
 
-    protected void onHoverStart() {
+    public void onHoverStart() {
     }
 
-    protected void onHoverStop() {
+    public void onHoverStop() {
     }
 
     protected abstract void render();
 
-    void renderOuter() {
+    public void renderOuter() {
         render();
         children.forEach(GUIItem::renderOuter);
     }

@@ -130,6 +130,14 @@ public abstract class MathUtils {
         return Math.round(x / m) * m;
     }
 
+    public static double[] round(double[] x, double m) {
+        double[] r = new double[x.length];
+        for (int i = 0; i < x.length; i++) {
+            r[i] = round(x[i], m);
+        }
+        return r;
+    }
+
     public static Vec3d vecMap(Vec3d v1, Function<Double, Double> f) {
         return new Vec3d(f.apply(v1.x), f.apply(v1.y), f.apply(v1.z));
     }

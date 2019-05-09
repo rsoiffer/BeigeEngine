@@ -248,7 +248,7 @@ public class Font {
         }
 
         public void draw2dCentered(Transformation t, Color color, Color outlineColor) {
-            draw2d(t.translate(new Vec3d(width / 2, 0, 0)), color, outlineColor);
+            draw2d(t.translate(new Vec3d(-width / 2, 0, 0)), color, outlineColor);
         }
     }
 }

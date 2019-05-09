@@ -1,6 +1,7 @@
 package engine;
 
 import graphics.Camera;
+import graphics.Camera.Camera2d;
 import graphics.Window;
 import java.util.BitSet;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
@@ -56,11 +57,19 @@ public abstract class Input {
     }
 
     public static Vec2d mouse() {
-        return Camera.camera2d.toWorldCoords(mouse);
+        return mouse(Camera.camera2d);
+    }
+
+    public static Vec2d mouse(Camera2d camera) {
+        return camera.toWorldCoords(mouse);
     }
 
     public static Vec2d mouseDelta() {
-        return Camera.camera2d.toWorldCoords(mouse.sub(prevMouse));
+        return mouseDelta(Camera.camera2d);
+    }
+
+    public static Vec2d mouseDelta(Camera2d camera) {
+        return camera.toWorldCoords(mouse.sub(prevMouse));
     }
 
     public static boolean mouseDown(int button) {

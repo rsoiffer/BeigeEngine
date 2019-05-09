@@ -4,6 +4,7 @@ import graphics.Color;
 import graphics.sprites.Font;
 import graphics.sprites.Font.FontText;
 import java.util.Objects;
+import util.math.Transformation;
 
 public class GUIText extends GUIItem {
 
@@ -22,9 +23,9 @@ public class GUIText extends GUIItem {
     protected void render() {
         if (text != null) {
             if (centered) {
-                text.draw2dCentered(transformationCenter(), color, outlineColor);
+                text.draw2dCentered(Transformation.create(center(), 0, scale), color, outlineColor);
             } else {
-                text.draw2d(transformationCenter(), color, outlineColor);
+                text.draw2d(Transformation.create(center(), 0, scale), color, outlineColor);
             }
         }
     }

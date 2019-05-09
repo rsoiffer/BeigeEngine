@@ -20,19 +20,19 @@ public class GUIButton extends GUIRectangle {
     }
 
     @Override
-    protected void onClick() {
+    public void onClick() {
         if (onClick != null) {
             onClick.run();
         }
     }
 
     @Override
-    protected void onHoverStart() {
+    public void onHoverStart() {
         color = new Color(.6, .6, .6, 1);
     }
 
     @Override
-    protected void onHoverStop() {
+    public void onHoverStop() {
         color = new Color(.4, .4, .4, 1);
     }
 }
