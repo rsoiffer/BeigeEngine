@@ -17,10 +17,11 @@ public class EyeCamera extends Camera {
     private static Matrix4d headPose, headPose2;
     private static Vec3d pos;
 
-    private final boolean leftEye;
+    private final Matrix4d eyeToHeadTransform, eyeProjectionMatrix;
 
     public EyeCamera(boolean leftEye) {
-        this.leftEye = leftEye;
+        eyeToHeadTransform = Vive.getEyeToHeadTransform(leftEye);
+        eyeProjectionMatrix = Vive.getEyeProjectionMatrix(leftEye);
     }
 
     public static Vec3d headPos() {
@@ -35,12 +36,12 @@ public class EyeCamera extends Camera {
 
     @Override
     public Matrix4d projectionMatrix() {
-        return Vive.getEyeProjectionMatrix(leftEye);
+        return new Matrix4d(eyeProjectionMatrix);
     }
 
     @Override
     public Matrix4d viewMatrix() {
-        return Vive.getEyeToHeadTransform(leftEye).mul(headPose)
+        return eyeToHeadTransform.mul(headPose, new Matrix4d())
                 .rotate(0 - Math.PI / 2, new Vector3d(1, 0, 0))
                 .rotate(Math.PI / 2 - 0, new Vector3d(0, 0, 1))
                 .translate(pos.mul(-1).toJOML());
