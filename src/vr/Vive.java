@@ -31,6 +31,7 @@ public class Vive {
 
     public static double SCALE_FACTOR = 1;
     public static Framebuffer leftEye, rightEye;
+    public static boolean running;
 
     public static void main(String[] args) {
         init();
@@ -125,6 +126,7 @@ public class Vive {
             OpenVR.create(token);
         }
         ViveInput.init();
+        running = true;
     }
 
     public static void initRender(Vec4d clearColor) {

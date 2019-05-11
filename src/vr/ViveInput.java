@@ -26,15 +26,16 @@ public class ViveInput {
     public static void init() {
         for (int i = 0; i < 64; i++) {
             if (VRSystem.VRSystem_IsTrackedDeviceConnected(i)) {
-            int deviceClass = VRSystem.VRSystem_GetTrackedDeviceClass(i);
-            if (deviceClass == VR.ETrackedDeviceClass_TrackedDeviceClass_Controller) {
-                ViveController vc = new ViveController(i);
-                vc.update();
-                if (RIGHT == null) {
-                    RIGHT = vc;
-                } else if (LEFT == null) {
-                    LEFT = vc;
-                }}
+                int deviceClass = VRSystem.VRSystem_GetTrackedDeviceClass(i);
+                if (deviceClass == VR.ETrackedDeviceClass_TrackedDeviceClass_Controller) {
+                    ViveController vc = new ViveController(i);
+                    vc.update();
+                    if (RIGHT == null) {
+                        RIGHT = vc;
+                    } else if (LEFT == null) {
+                        LEFT = vc;
+                    }
+                }
             }
         }
     }
@@ -92,6 +93,10 @@ public class ViveInput {
 
         public String getPropertyString(int prop) {
             return VRSystem.VRSystem_GetStringTrackedDeviceProperty(id, prop, null);
+        }
+
+        public void hapticPulse(double durationMillis) {
+            VRSystem.VRSystem_TriggerHapticPulse(id, 0, (short) (1e3 * durationMillis));
         }
 
         public Matrix4d pose() {
