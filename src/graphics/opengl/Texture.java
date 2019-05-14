@@ -49,8 +49,8 @@ public class Texture extends GLObject {
         }
 
         Texture t = new Texture(GL_TEXTURE_2D);
-        t.setParameter(GL_TEXTURE_MAX_LEVEL, 4);
-        t.setParameter(GL_TEXTURE_MAX_ANISOTROPY, 8);
+        t.setParameter(GL_TEXTURE_MAX_LEVEL, 16);
+        t.setParameter(GL_TEXTURE_MAX_ANISOTROPY, 16);
         t.uploadData(widthArray[0], heightArray[0], image);
         return t;
     }
