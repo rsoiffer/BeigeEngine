@@ -78,7 +78,7 @@ public class Shader extends GLObject {
     }
 
     public void setMVP(Transformation t) {
-        setUniform("model", t.modelMatrix());
+        setUniform("model", t.matrix());
         setUniform("view", Camera.current.viewMatrix());
         setUniform("projection", Camera.current.projectionMatrix());
     }

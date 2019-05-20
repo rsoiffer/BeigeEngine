@@ -3,7 +3,6 @@ package graphics.opengl;
 import engine.Settings;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
@@ -27,7 +26,7 @@ public class GLState {
     private final Map<Integer, Boolean> flags = new HashMap();
     private Framebuffer framebuffer = null;
     private Shader shader = null;
-    private Texture texture = null;
+    private Texture[] texture = new Texture[32];
     private VertexArrayObject vao = null;
 
     public static void bindBuffer(BufferObject buffer) {
@@ -54,10 +53,20 @@ public class GLState {
     }
 
     public static void bindTexture(Texture texture) {
-        if (texture != state.texture) {
-            state.texture = texture;
-            if (texture != null) {
+        if (texture != null) {
+            if (texture != state.texture[texture.num]) {
+                state.texture[texture.num] = texture;
                 glActiveTexture(GL_TEXTURE0 + texture.num);
+                glBindTexture(texture.type, texture.id);
+            }
+        }
+    }
+
+    public static void bindTexture(Texture texture, int num) {
+        if (texture != state.texture[num]) {
+            state.texture[num] = texture;
+            if (texture != null) {
+                glActiveTexture(GL_TEXTURE0 + num);
                 glBindTexture(texture.type, texture.id);
             }
         }
@@ -111,30 +120,12 @@ public class GLState {
         return state.shader;
     }
 
-    public static Texture getTexture() {
-        return state.texture;
+    public static Texture getTexture(int num) {
+        return state.texture[num];
     }
 
     public static VertexArrayObject getVertexArrayObject() {
         return state.vao;
-    }
-
-    public static void inTempState(Runnable r) {
-        GLState oldState = state.copy();
-        r.run();
-        setBlendFunc(oldState.blendFunc1, oldState.blendFunc2);
-        for (BufferObject buffer : oldState.buffers.values()) {
-            bindBuffer(buffer);
-        }
-        for (Entry<Integer, Boolean> e : oldState.flags.entrySet()) {
-            if (e.getValue() != null) {
-                setFlag(e.getKey(), e.getValue());
-            }
-        }
-        bindFramebuffer(oldState.framebuffer);
-        bindShader(oldState.shader);
-        bindTexture(oldState.texture);
-        bindVertexArrayObject(oldState.vao);
     }
 
     public static void setBlendFunc(int blendFunc1, int blendFunc2) {

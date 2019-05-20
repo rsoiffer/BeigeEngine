@@ -24,6 +24,11 @@ public class Transformation {
         return new Vec3d(v4.x, v4.y, v4.z);
     }
 
+    public Vec3d applyRotation(Vec3d v) {
+        Vector4d v4 = m.transform(new Vector4d(v.x, v.y, v.z, 0));
+        return new Vec3d(v4.x, v4.y, v4.z);
+    }
+
     public static Transformation create(Vec2d position, double rotation, double scale) {
         return create(position, rotation, new Vec2d(scale, scale));
     }
@@ -49,8 +54,21 @@ public class Transformation {
         return new Transformation(new Matrix4d().translate(position.toJOML()).set3x3(linearPart));
     }
 
-    public Matrix4d modelMatrix() {
+    public Matrix4d matrix() {
         return new Matrix4d(m);
+    }
+
+    public Transformation mul(Transformation t) {
+        return new Transformation(m.mul(t.m, new Matrix4d()));
+    }
+
+    public Vec3d position() {
+        Vector4d v = new Vector4d(0, 0, 0, 1).mul(m);
+        return new Vec3d(v.x, v.y, v.z);
+    }
+
+    public Transformation scale(double s) {
+        return new Transformation(m.scale(s, new Matrix4d()));
     }
 
     @Override

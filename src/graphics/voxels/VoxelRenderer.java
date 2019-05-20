@@ -187,7 +187,7 @@ public class VoxelRenderer<T> {
             }
 
             if (intersectsFrustum()) {
-                Matrix4d worldMat = Camera.current.viewMatrix().mul(t.modelMatrix());
+                Matrix4d worldMat = Camera.current.viewMatrix().mul(t.matrix());
                 params.shader.setMVP(t);
                 params.shader.setUniform("color", color);
                 for (Vec3d dir : DIRS) {
