@@ -54,19 +54,19 @@ public class GLState {
 
     public static void bindTexture(Texture texture) {
         if (texture != null) {
+            glActiveTexture(GL_TEXTURE0 + texture.num);
             if (texture != state.texture[texture.num]) {
                 state.texture[texture.num] = texture;
-                glActiveTexture(GL_TEXTURE0 + texture.num);
                 glBindTexture(texture.type, texture.id);
             }
         }
     }
 
     public static void bindTexture(Texture texture, int num) {
+        glActiveTexture(GL_TEXTURE0 + num);
         if (texture != state.texture[num]) {
             state.texture[num] = texture;
             if (texture != null) {
-                glActiveTexture(GL_TEXTURE0 + num);
                 glBindTexture(texture.type, texture.id);
             }
         }
