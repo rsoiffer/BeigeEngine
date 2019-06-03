@@ -3,11 +3,11 @@ package behaviors._3d;
 import engine.Behavior;
 import engine.Layer;
 import static engine.Layer.RENDER3D;
+import graphics.Color;
 import graphics.voxels.VoxelModel;
 import util.math.Quaternion;
 import util.math.Transformation;
 import util.math.Vec3d;
-import util.math.Vec4d;
 
 public class ModelBehavior extends Behavior {
 
@@ -16,7 +16,7 @@ public class ModelBehavior extends Behavior {
     public VoxelModel model;
     public double rotation = 0;
     public double scale = 1 / 16.;
-    public Vec4d color = new Vec4d(1, 1, 1, 1);
+    public Color color = Color.WHITE;
     public boolean useOriginalSize;
 
     @Override

@@ -1,6 +1,7 @@
 package graphics.opengl;
 
 import graphics.Camera;
+import graphics.Color;
 import java.util.HashMap;
 import org.joml.Matrix4d;
 import static org.lwjgl.opengl.GL20.*;
@@ -115,6 +116,12 @@ public class Shader extends GLObject {
         bind();
         int uniform = getUniformLocation(name);
         glUniform4fv(uniform, new float[]{(float) value.x, (float) value.y, (float) value.z, (float) value.w});
+    }
+
+    public void setUniform(String name, Color value) {
+        bind();
+        int uniform = getUniformLocation(name);
+        glUniform4fv(uniform, new float[]{(float) value.r, (float) value.g, (float) value.b, (float) value.a});
     }
 
     public void setUniform(String name, Matrix4d mat) {

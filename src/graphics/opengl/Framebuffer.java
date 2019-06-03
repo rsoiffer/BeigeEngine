@@ -1,6 +1,7 @@
 package graphics.opengl;
 
 import engine.Settings;
+import graphics.Color;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_COMPONENT;
@@ -37,7 +38,6 @@ import static org.lwjgl.opengl.GL30.glGenFramebuffers;
 import static org.lwjgl.opengl.GL30.glGenRenderbuffers;
 import static org.lwjgl.opengl.GL30.glRenderbufferStorage;
 import util.math.Vec2d;
-import util.math.Vec4d;
 
 public class Framebuffer extends GLObject {
 
@@ -104,15 +104,15 @@ public class Framebuffer extends GLObject {
         GLState.bindFramebuffer(this);
     }
 
-    public void clear(Vec4d color) {
+    public void clear(Color color) {
         bind();
-        glClearColor((float) color.x, (float) color.y, (float) color.z, (float) color.w);
+        glClearColor((float) color.r, (float) color.g, (float) color.b, (float) color.a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
 
-    public static void clearWindow(Vec4d color) {
+    public static void clearWindow(Color color) {
         GLState.bindFramebuffer(null);
-        glClearColor((float) color.x, (float) color.y, (float) color.z, (float) color.w);
+        glClearColor((float) color.r, (float) color.g, (float) color.b, (float) color.a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
 

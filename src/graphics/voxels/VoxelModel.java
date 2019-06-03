@@ -1,5 +1,6 @@
 package graphics.voxels;
 
+import graphics.Color;
 import graphics.opengl.Shader;
 import static graphics.voxels.VoxelRenderer.DIRS;
 import graphics.voxels.VoxelRenderer.VoxelRendererParams;
@@ -12,7 +13,6 @@ import static util.math.MathUtils.mod;
 import util.math.Transformation;
 import util.math.Vec2d;
 import util.math.Vec3d;
-import util.math.Vec4d;
 import util.rlestorage.IntConverter.IntegerConverter;
 import util.rlestorage.RLEArrayStorage;
 
@@ -117,7 +117,7 @@ public class VoxelModel {
                 + (mod(bytes[pos + 3], 256) << 24);
     }
 
-    public void render(Transformation t, Vec4d color) {
+    public void render(Transformation t, Color color) {
         renderer.render(t, color);
     }
 }

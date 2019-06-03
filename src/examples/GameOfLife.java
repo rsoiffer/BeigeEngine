@@ -23,13 +23,13 @@ import util.math.Vec2d;
 
 public class GameOfLife {
 
-    public static final int SIZE = 1000;
-    public static boolean[][] STATE = new boolean[SIZE][SIZE];
+    private static final int SIZE = 1000;
+    private static boolean[][] STATE = new boolean[SIZE][SIZE];
 
-    public static Vec2d viewPos = new Vec2d(0, 0);
-    public static double viewZoom = 0;
-    public static Vec2d viewSize = new Vec2d(16, 9);
-    public static boolean running = false;
+    private static Vec2d viewPos = new Vec2d(0, 0);
+    private static double viewZoom = 0;
+    private static Vec2d viewSize = new Vec2d(16, 9);
+    private static boolean running = false;
 
     public static void main(String[] args) {
         Core.init();
@@ -94,11 +94,11 @@ public class GameOfLife {
         Core.run();
     }
 
-    public static boolean get(int x, int y) {
+    private static boolean get(int x, int y) {
         return STATE[mod(x, SIZE)][mod(y, SIZE)];
     }
 
-    public static boolean[][] nextState() {
+    private static boolean[][] nextState() {
         boolean[][] nextState = new boolean[SIZE][SIZE];
         for (int x = 0; x < SIZE; x++) {
             for (int y = 0; y < SIZE; y++) {
@@ -114,7 +114,7 @@ public class GameOfLife {
         return nextState;
     }
 
-    public static void set(int x, int y, boolean val) {
+    private static void set(int x, int y, boolean val) {
         STATE[mod(x, SIZE)][mod(y, SIZE)] = val;
     }
 }

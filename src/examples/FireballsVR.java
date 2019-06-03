@@ -27,7 +27,7 @@ public class FireballsVR {
     public static List<Fireball> grabbed = new ArrayList();
 
     public static void main(String[] args) {
-        Settings.BACKGROUND_COLOR = new Color(.4, .7, 1, 1);
+        Settings.BACKGROUND_COLOR = new Color(.4, .7, 1);
         Core.init();
 
         new FPSBehavior().create();

@@ -1,22 +1,97 @@
 package graphics;
 
-import util.math.Vec4d;
+import static util.math.MathUtils.lerp;
 
-public class Color extends Vec4d {
+public class Color {
 
-    public static final Color RED = new Color(1, 0, 0, 1);
-    public static final Color GREEN = new Color(0, 1, 0, 1);
-    public static final Color BLUE = new Color(0, 0, 1, 1);
-    public static final Color WHITE = new Color(1, 1, 1, 1);
-    public static final Color BLACK = new Color(0, 0, 0, 1);
+    public static final Color AMBER = new Color(1, .75, 0);
+    public static final Color BLACK = new Color(0, 0, 0);
+    public static final Color BLUE = new Color(0, 0, 1);
+    public static final Color CLEAR = new Color(0, 0, 0, 0);
+    public static final Color CYAN = new Color(0, 1, 1);
+    public static final Color GREEN = new Color(0, 1, 0);
+    public static final Color GREY = new Color(.5, .5, .5);
+    public static final Color LIME = new Color(.75, 1, 0);
+    public static final Color MAGENTA = new Color(1, 0, 1);
+    public static final Color ORANGE = new Color(1, .5, 0);
+    public static final Color PURPLE = new Color(.75, 0, 1);
+    public static final Color RED = new Color(1, 0, 0);
+    public static final Color VERMILION = new Color(1, .25, 0);
+    public static final Color VIOLET = new Color(.375, 0, 1);
+    public static final Color WHITE = new Color(1, 1, 1);
+    public static final Color YELLOW = new Color(1, 1, 0);
 
     public final double r, g, b, a;
 
+    /**
+     * Constructs a color from rgb, with no transparency.
+     *
+     * @param r Red.
+     * @param g Green.
+     * @param b Blue.
+     */
+    public Color(double r, double g, double b) {
+        this(r, g, b, 1);
+    }
+
+    /**
+     * Constructs a color from rgba.
+     *
+     * @param r Red.
+     * @param g Green.
+     * @param b Blue.
+     * @param a Alpha.
+     */
     public Color(double r, double g, double b, double a) {
-        super(r, g, b, a);
         this.r = r;
         this.g = g;
         this.b = b;
         this.a = a;
+    }
+
+    /**
+     * Creates a gray based off of the value given.
+     *
+     * @param value The based value.
+     * @return The gray color based on the value.
+     */
+    public static Color gray(double value) {
+        return new Color(value, value, value);
+    }
+
+    /**
+     * Returns the grayscale version of the color.
+     *
+     * @return The grayscale version of the color.
+     */
+    public Color grayscale() {
+        double average = (r + g + b) / 3;
+        return new Color(average, average, average, a);
+    }
+
+    /**
+     * Linearly interpolates between two colors.
+     *
+     * @param c The second color to mix with.
+     * @param amt The amount of the second color.
+     * @return The interpolated color.
+     */
+    public Color mix(Color c, double amt) {
+        return new Color(lerp(r, c.r, amt), lerp(g, c.g, amt), lerp(b, c.b, amt), lerp(a, c.a, amt));
+    }
+
+    /**
+     * Multiplies the color's rgb by a scalar.
+     *
+     * @param scalar The scalar to multiply by.
+     * @return The new color.
+     */
+    public Color multRGB(double scalar) {
+        return new Color(r * scalar, g * scalar, b * scalar, a);
+    }
+
+    @Override
+    public String toString() {
+        return "Color{" + "r=" + r + ", g=" + g + ", b=" + b + ", a=" + a + '}';
     }
 }

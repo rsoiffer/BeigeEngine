@@ -3,6 +3,7 @@ package graphics.voxels;
 import engine.Core;
 import engine.Settings;
 import graphics.Camera;
+import graphics.Color;
 import graphics.opengl.BufferObject;
 import graphics.opengl.Shader;
 import graphics.opengl.VertexArrayObject;
@@ -26,7 +27,6 @@ import static util.math.MathUtils.floor;
 import util.math.Transformation;
 import util.math.Vec2d;
 import util.math.Vec3d;
-import util.math.Vec4d;
 import util.rlestorage.RLEColumn;
 
 public class VoxelRenderer<T> {
@@ -170,7 +170,7 @@ public class VoxelRenderer<T> {
 //        return Camera.camera3d.getViewFrustum().testAab((float) min.x, (float) min.y, (float) min.z, (float) max.x, (float) max.y, (float) max.z);
     }
 
-    public void render(Transformation t, Vec4d color) {
+    public void render(Transformation t, Color color) {
         if (vboMapsFinished == 6) {
             if (vaoMap.isEmpty()) {
                 for (Vec3d dir : DIRS) {
