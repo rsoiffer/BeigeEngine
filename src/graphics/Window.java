@@ -11,6 +11,7 @@ import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.glViewport;
 import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.Configuration;
 import org.lwjgl.system.MemoryStack;
@@ -34,6 +35,9 @@ public class Window {
         if (Settings.ENABLE_VSYNC) {
             glfwSwapInterval(1);
         }
+
+        glfwSetFramebufferSizeCallback(window.handle, (w, wd, ht) -> Window.window.resize(wd, ht));
+
         glfwShowWindow(window.handle);
     }
 
@@ -77,6 +81,16 @@ public class Window {
         }
 
         setCursorEnabled(Settings.SHOW_CURSOR);
+    }
+    
+    public void resizeWindow(int width, int height){
+        glfwSetWindowSize(window.handle, width, height);
+    }
+
+    private void resize(int width, int height) {
+        Settings.WINDOW_WIDTH = width;
+        Settings.WINDOW_HEIGHT = height;
+        glViewport(0, 0, Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT);
     }
 
     private void cleanup() {

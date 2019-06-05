@@ -6,11 +6,14 @@ import engine.Core;
 import engine.Input;
 import static engine.Layer.RENDER2D;
 import static engine.Layer.UPDATE;
+import engine.Settings;
 import graphics.Camera;
 import graphics.Color;
 import graphics.Graphics;
+import graphics.Window;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_H;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
@@ -39,6 +42,7 @@ public class GameOfLife {
 
         UPDATE.onStep(() -> {
             double dx = 0, dy = 0;
+            
             if (Input.keyDown(GLFW_KEY_W)) {
                 dy += 1;
             }
@@ -78,9 +82,13 @@ public class GameOfLife {
             if (running) {
                 STATE = nextState();
             }
+            if(Input.keyJustPressed(GLFW_KEY_H)){
+                Window.window.resizeWindow(400, 400);
+            }
         });
 
         RENDER2D.onStep(() -> {
+            viewSize = new Vec2d(16, 16.0 * Settings.WINDOW_HEIGHT / Settings.WINDOW_WIDTH);
             Camera.camera2d.setCenterSize(viewPos, viewSize.mul(Math.pow(2, -.5 * viewZoom)));
             for (int x = floor(Camera.camera2d.lowerLeft.x); x < Camera.camera2d.upperRight.x; x++) {
                 for (int y = floor(Camera.camera2d.lowerLeft.y); y < Camera.camera2d.upperRight.y; y++) {
