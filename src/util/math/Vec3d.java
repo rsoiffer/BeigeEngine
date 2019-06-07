@@ -153,4 +153,8 @@ public class Vec3d {
     public String toString() {
         return "Vec3d{" + "x=" + x + ", y=" + y + ", z=" + z + '}';
     }
+    
+    public VectorN toVectorN(){
+        return VectorN.of(x, y, z);
+    }
 }

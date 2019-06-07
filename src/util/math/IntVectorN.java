@@ -103,9 +103,9 @@ public class IntVectorN implements Iterable<Integer> {
      * @param v The other vector.
      * @return The dot product.
      */
-    public double dot(IntVectorN v) {
+    public int dot(IntVectorN v) {
         assertDimMatches(v);
-        double sum = 0;
+        int sum = 0;
         for (int i = 0; i < dim; i++) {
             sum += vec[i] * v.vec[i];
         }
@@ -145,7 +145,7 @@ public class IntVectorN implements Iterable<Integer> {
      * @param index The index to poll.
      * @return The value at the given index.
      */
-    public double get(int index) {
+    public int get(int index) {
         if (index < 0 || index >= dim) {
             throw new IllegalArgumentException("Index out of bounds: " + index);
         }
@@ -295,7 +295,7 @@ public class IntVectorN implements Iterable<Integer> {
      *
      * @return The value at index three.
      */
-    public double w() {
+    public int w() {
         return get(3);
     }
 
@@ -304,7 +304,7 @@ public class IntVectorN implements Iterable<Integer> {
      *
      * @return The value at index zero.
      */
-    public double x() {
+    public int x() {
         return get(0);
     }
 
@@ -313,7 +313,7 @@ public class IntVectorN implements Iterable<Integer> {
      *
      * @return The value at index one.
      */
-    public double y() {
+    public int y() {
         return get(1);
     }
 
@@ -322,7 +322,7 @@ public class IntVectorN implements Iterable<Integer> {
      *
      * @return The value at index two.
      */
-    public double z() {
+    public int z() {
         return get(2);
     }
 

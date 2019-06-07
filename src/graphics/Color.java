@@ -10,7 +10,7 @@ public class Color {
     public static final Color CLEAR = new Color(0, 0, 0, 0);
     public static final Color CYAN = new Color(0, 1, 1);
     public static final Color GREEN = new Color(0, 1, 0);
-    public static final Color GREY = new Color(.5, .5, .5);
+    public static final Color GRAY = new Color(.5, .5, .5);
     public static final Color LIME = new Color(.75, 1, 0);
     public static final Color MAGENTA = new Color(1, 0, 1);
     public static final Color ORANGE = new Color(1, .5, 0);
@@ -50,6 +50,46 @@ public class Color {
     }
 
     /**
+     * Replaces the old Alpha value with the new one.
+     *
+     * @param a The new value.
+     * @return A new color which the value changed.
+     */
+    public Color setA(double a) {
+        return new Color(r, g, b, a);
+    }
+
+    /**
+     * Replaces the old Red value with the new one.
+     *
+     * @param r The new value.
+     * @return A new color which the value changed.
+     */
+    public Color setR(double r) {
+        return new Color(r, g, b, a);
+    }
+
+    /**
+     * Replaces the old Green value with the new one.
+     *
+     * @param g The new value.
+     * @return A new color which the value changed.
+     */
+    public Color setG(double g) {
+        return new Color(r, g, b, a);
+    }
+
+    /**
+     * Replaces the old Blue value with the new one.
+     *
+     * @param b The new value.
+     * @return A new color which the value changed.
+     */
+    public Color setB(double b) {
+        return new Color(r, g, b, a);
+    }
+
+    /**
      * Creates a gray based off of the value given.
      *
      * @param value The based value.
@@ -78,6 +118,24 @@ public class Color {
      */
     public Color mix(Color c, double amt) {
         return new Color(lerp(r, c.r, amt), lerp(g, c.g, amt), lerp(b, c.b, amt), lerp(a, c.a, amt));
+    }
+
+    /**
+     * Mixes color with alpha mixing.
+     * @param top The color on top.
+     * @return The new color.
+     */
+    public Color alphaMix(Color top) {
+        if (top.a >= 1) {
+            return top;
+        }
+        if (top.a <= 0) {
+            return this;
+        }
+        double newAlpha = (1.0 - top.a) * a + top.a;
+        return new Color(((1 - top.a) * a * r + top.a * top.r) / newAlpha,
+                ((1 - top.a) * a * g + top.a * top.g) / newAlpha,
+                ((1 - top.a) * a * b + top.a * top.b) / newAlpha, newAlpha);
     }
 
     /**
