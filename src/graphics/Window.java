@@ -91,6 +91,24 @@ public class Window {
         Settings.WINDOW_WIDTH = width;
         Settings.WINDOW_HEIGHT = height;
         glViewport(0, 0, Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT);
+        
+        boolean resizeAgain = false;
+        
+        if(Settings.MIN_WINDOW_WIDTH > Settings.WINDOW_WIDTH || Settings.MIN_WINDOW_HEIGHT > Settings.WINDOW_HEIGHT){
+            Settings.WINDOW_WIDTH = Math.max(width, Settings.MIN_WINDOW_WIDTH);
+            Settings.WINDOW_HEIGHT = Math.max(height, Settings.MIN_WINDOW_HEIGHT);
+            resizeAgain = true;
+        }
+        
+        if(Settings.WINDOW_WIDTH % Settings.WINDOW_WIDTH_DIVISOR != 0 || Settings.WINDOW_HEIGHT % Settings.WINDOW_HEIGHT_DIVISOR != 0){
+            Settings.WINDOW_WIDTH += Settings.WINDOW_WIDTH_DIVISOR - (Settings.WINDOW_WIDTH % Settings.WINDOW_WIDTH_DIVISOR);
+            Settings.WINDOW_HEIGHT += Settings.WINDOW_HEIGHT_DIVISOR - (Settings.WINDOW_HEIGHT % Settings.WINDOW_HEIGHT_DIVISOR);
+            resizeAgain = true;
+        }
+        
+        if(resizeAgain){
+            window.resizeWindow(Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT);
+        }
     }
 
     private void cleanup() {

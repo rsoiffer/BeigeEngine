@@ -47,7 +47,7 @@ public abstract class Core {
     }
 
     public static void run() {
-        while (!shouldClose && !Window.window.shouldClose()) {
+        while (!shouldClose && !(Settings.CLOSE_ON_X && Window.window.shouldClose())) {
             Input.nextFrame();
             Window.window.nextFrame();
             Framebuffer.clearWindow(Settings.BACKGROUND_COLOR);

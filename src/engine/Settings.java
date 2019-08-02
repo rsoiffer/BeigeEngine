@@ -6,6 +6,14 @@ public class Settings {
 
     public static int WINDOW_WIDTH = 1600;
     public static int WINDOW_HEIGHT = 900;
+    
+    public static int MIN_WINDOW_WIDTH = 0;
+    public static int MIN_WINDOW_HEIGHT = 0;
+    
+    public static int WINDOW_WIDTH_DIVISOR = 1;
+    public static int WINDOW_HEIGHT_DIVISOR = 1;
+    
+    public static boolean CLOSE_ON_X = true;
 
     public static Color BACKGROUND_COLOR = Color.BLACK;
     public static int ANTI_ALIASING = 1; // Scale from 1 - 16
