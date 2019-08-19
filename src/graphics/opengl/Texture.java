@@ -11,6 +11,8 @@ import static org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load;
 
 public class Texture extends GLObject {
 
+    public static int MAG_FILTER = GL_NEAREST;
+    
     final int type;
     private int width, height;
     public int num;
@@ -51,6 +53,7 @@ public class Texture extends GLObject {
         Texture t = new Texture(GL_TEXTURE_2D);
         t.setParameter(GL_TEXTURE_MAX_LEVEL, 16);
         t.setParameter(GL_TEXTURE_MAX_ANISOTROPY, 16);
+        t.setParameter(GL_TEXTURE_MAG_FILTER, MAG_FILTER);
         t.uploadData(widthArray[0], heightArray[0], image);
         return t;
     }

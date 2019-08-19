@@ -7,6 +7,8 @@ package util.math;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.function.BinaryOperator;
+import java.util.function.UnaryOperator;
 import java.util.stream.DoubleStream;
 
 /**
@@ -21,6 +23,62 @@ public class VectorN implements Iterable<Double> {
      * Doubles nearer to each other than EPSILON are considered the same.
      */
     public static final double EPSILON = 1E-20;
+
+    /**
+     * Creates a vector with a one in index index and zeros everywhere else.
+     *
+     * @param dim The dimension of the vector.
+     * @param index The index which contains a one.
+     * @return A dim dimensional vector.
+     */
+    public static VectorN basisVector(int dim, int index) {
+        if (index < 0 || index >= dim) {
+            throw new IllegalArgumentException("Index out of bounds: " + index);
+        }
+        VectorN nv = new VectorN(dim);
+        nv.vec[index] = 1;
+        return nv;
+    }
+
+    /**
+     * Constructs a new vector from a stream of doubles.
+     *
+     * @param s The stream of doubles.
+     * @return The new vector.
+     */
+    public static VectorN fromStream(DoubleStream s) {
+        return of(s.toArray());
+    }
+
+    public static VectorN of(double... vec) {
+        VectorN v = new VectorN(vec.length);
+        System.arraycopy(vec, 0, v.vec, 0, vec.length);
+        return v;
+    }
+
+    /**
+     * Creates a vector with ones in every index.
+     *
+     * @param dim The dimension of the vector.
+     * @return A d dimensional vector.
+     */
+    public static VectorN ones(int dim) {
+        VectorN v = new VectorN(dim);
+        for (int i = 0; i < dim; i++) {
+            v.vec[i] = 1;
+        }
+        return v;
+    }
+
+    /**
+     * Creates a d dimensional zero vector.
+     *
+     * @param dim The dimension of the vector.
+     * @return A d dimensional vector.
+     */
+    public static VectorN zeros(int dim) {
+        return new VectorN(dim);
+    }
 
     /**
      * The dimension of the vector.
@@ -76,19 +134,60 @@ public class VectorN implements Iterable<Double> {
     }
 
     /**
-     * Creates a vector with a one in index index and zeros everywhere else.
+     * Applies the binary operator to each index of the given vector and other.
      *
-     * @param dim The dimension of the vector.
-     * @param index The index which contains a one.
-     * @return A dim dimensional vector.
+     * @param applicator The binary operation to apply.
+     * @param other The second vector to apply to the binary operation.
+     * @return The new vector given from the application.
      */
-    public static VectorN basisVector(int dim, int index) {
-        if (index < 0 || index >= dim) {
-            throw new IllegalArgumentException("Index out of bounds: " + index);
-        }
+    public VectorN bimap(BinaryOperator<Double> applicator, VectorN other) {
         VectorN nv = new VectorN(dim);
-        nv.vec[index] = 1;
+        for (int i = 0; i < dim; i++) {
+            nv.vec[i] = applicator.apply(vec[i], other.vec[i]);
+        }
         return nv;
+    }
+
+    /**
+     * checks whether the vector v is in the same sector (quadrant in 2
+     * dimensions) and whether each component is less than or equal to that of
+     * the given vector.
+     *
+     * @param v The vector to compare.
+     * @return Whether v is in the same sector and is component-wise less than
+     * or equal to the given vector.
+     */
+    public boolean contains(VectorN v) {
+        assertDimMatches(v);
+        VectorN adjusted = bimap((d, t) -> d > 0 ? t : -t, v);
+        VectorN positiveCompare = map(t -> Math.abs(t));
+        for (int i = 0; i < dim; i++) {
+            if (adjusted.vec[i] < 0 || positiveCompare.vec[i] < adjusted.vec[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * checks whether the vector v is in the same sector (quadrant in 2
+     * dimensions) and whether each component is less than that of the given
+     * vector.
+     *
+     * @param v The vector to compare.
+     * @return Whether v is in the same sector and is component-wise less than
+     * the given vector.
+     */
+    public boolean containsExclusive(VectorN v) {
+        assertDimMatches(v);
+        VectorN adjusted = bimap((d, t) -> d > 0 ? t : -t, v);
+        VectorN positiveCompare = map(t -> Math.abs(t));
+        for (int i = 0; i < dim; i++) {
+            if (adjusted.vec[i] < 0 || positiveCompare.vec[i] <= adjusted.vec[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -163,16 +262,6 @@ public class VectorN implements Iterable<Double> {
     }
 
     /**
-     * Constructs a new vector from a stream of doubles.
-     *
-     * @param s The stream of doubles.
-     * @return The new vector.
-     */
-    public static VectorN fromStream(DoubleStream s) {
-        return of(s.toArray());
-    }
-
-    /**
      * Returns the value at the given index of the vector.
      *
      * @param index The index to poll.
@@ -216,6 +305,20 @@ public class VectorN implements Iterable<Double> {
     }
 
     /**
+     * Applies the unary operator to each index of the vector.
+     *
+     * @param applicator The unary operation to apply.
+     * @return The new vector given from the application.
+     */
+    public VectorN map(UnaryOperator<Double> applicator) {
+        VectorN nv = new VectorN(dim);
+        for (int i = 0; i < dim; i++) {
+            nv.vec[i] = applicator.apply(vec[i]);
+        }
+        return nv;
+    }
+
+    /**
      * Multiplies the vector by a scalar.
      *
      * @param scalar The scalar.
@@ -240,26 +343,6 @@ public class VectorN implements Iterable<Double> {
             throw new RuntimeException("Trying to normalize a vector of length 0");
         }
         return mult(1 / length);
-    }
-
-    public static VectorN of(double... vec) {
-        VectorN v = new VectorN(vec.length);
-        System.arraycopy(vec, 0, v.vec, 0, vec.length);
-        return v;
-    }
-
-    /**
-     * Creates a vector with ones in every index.
-     *
-     * @param dim The dimension of the vector.
-     * @return A d dimensional vector.
-     */
-    public static VectorN ones(int dim) {
-        VectorN v = new VectorN(dim);
-        for (int i = 0; i < dim; i++) {
-            v.vec[i] = 1;
-        }
-        return v;
     }
 
     /**
@@ -300,7 +383,7 @@ public class VectorN implements Iterable<Double> {
         }
         VectorN nv = new VectorN(dim);
         for (int i = 0; i < dim; i++) {
-            nv.vec[index] = i == index ? value : vec[i];
+            nv.vec[i] = i == index ? value : vec[i];
         }
         return nv;
     }
@@ -377,13 +460,4 @@ public class VectorN implements Iterable<Double> {
         return get(2);
     }
 
-    /**
-     * Creates a d dimensional zero vector.
-     *
-     * @param dim The dimension of the vector.
-     * @return A d dimensional vector.
-     */
-    public static VectorN zeros(int dim) {
-        return new VectorN(dim);
-    }
 }

@@ -7,6 +7,8 @@ package util.math;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.function.BinaryOperator;
+import java.util.function.UnaryOperator;
 import java.util.stream.IntStream;
 import static util.math.VectorN.EPSILON;
 
@@ -17,6 +19,62 @@ import static util.math.VectorN.EPSILON;
  * @author Kosmic
  */
 public class IntVectorN implements Iterable<Integer> {
+
+    /**
+     * Creates a vector with a one in index index and zeros everywhere else.
+     *
+     * @param dim The dimension of the vector.
+     * @param index The index which contains a one.
+     * @return A dim dimensional vector.
+     */
+    public static IntVectorN basisVector(int dim, int index) {
+        if (index < 0 || index >= dim) {
+            throw new IllegalArgumentException("Index out of bounds: " + index);
+        }
+        IntVectorN nv = new IntVectorN(dim);
+        nv.vec[index] = 1;
+        return nv;
+    }
+
+    /**
+     * Constructs a new vector from a stream of doubles.
+     *
+     * @param s The stream of doubles.
+     * @return The new vector.
+     */
+    public static IntVectorN fromStream(IntStream s) {
+        return of(s.toArray());
+    }
+
+    public static IntVectorN of(int... vec) {
+        IntVectorN v = new IntVectorN(vec.length);
+        System.arraycopy(vec, 0, v.vec, 0, vec.length);
+        return v;
+    }
+
+    /**
+     * Creates a vector with ones in every index.
+     *
+     * @param dim The dimension of the vector.
+     * @return A d dimensional vector.
+     */
+    public static IntVectorN ones(int dim) {
+        IntVectorN v = new IntVectorN(dim);
+        for (int i = 0; i < dim; i++) {
+            v.vec[i] = 1;
+        }
+        return v;
+    }
+
+    /**
+     * Creates a d dimensional zero vector.
+     *
+     * @param dim The dimension of the vector.
+     * @return A d dimensional vector.
+     */
+    public static IntVectorN zeros(int dim) {
+        return new IntVectorN(dim);
+    }
 
     /**
      * The dimension of the vector.
@@ -72,19 +130,39 @@ public class IntVectorN implements Iterable<Integer> {
     }
 
     /**
-     * Creates a vector with a one in index index and zeros everywhere else.
+     * Applies the binary operator to each index of the given vector and other.
      *
-     * @param dim The dimension of the vector.
-     * @param index The index which contains a one.
-     * @return A dim dimensional vector.
+     * @param applicator The binary operation to apply.
+     * @param other The second vector to apply to the binary operation.
+     * @return The new vector given from the application.
      */
-    public static IntVectorN basisVector(int dim, int index) {
-        if (index < 0 || index >= dim) {
-            throw new IllegalArgumentException("Index out of bounds: " + index);
-        }
+    public IntVectorN bimap(BinaryOperator<Integer> applicator, IntVectorN other) {
         IntVectorN nv = new IntVectorN(dim);
-        nv.vec[index] = 1;
+        for (int i = 0; i < dim; i++) {
+            nv.vec[i] = applicator.apply(vec[i], other.vec[i]);
+        }
         return nv;
+    }
+
+    /**
+     * checks whether the vector v is in the same sector (quadrant in 2
+     * dimensions) and whether each component is less than or equal to that of
+     * the given vector.
+     *
+     * @param v The vector to compare.
+     * @return Whether v is in the same sector and is component-wise less than
+     * or equal to the given vector.
+     */
+    public boolean contains(IntVectorN v) {
+        assertDimMatches(v);
+        IntVectorN adjusted = bimap((d, t) -> d > 0 ? t : -t, v);
+        IntVectorN positiveCompare = map(t -> Math.abs(t));
+        for (int i = 0; i < dim; i++) {
+            if (adjusted.vec[i] < 0 || positiveCompare.vec[i] < adjusted.vec[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -127,16 +205,6 @@ public class IntVectorN implements Iterable<Integer> {
             }
         }
         return true;
-    }
-
-    /**
-     * Constructs a new vector from a stream of doubles.
-     *
-     * @param s The stream of doubles.
-     * @return The new vector.
-     */
-    public static IntVectorN fromStream(IntStream s) {
-        return of(s.toArray());
     }
 
     /**
@@ -183,6 +251,20 @@ public class IntVectorN implements Iterable<Integer> {
     }
 
     /**
+     * Applies the unary operator to each index of the vector.
+     *
+     * @param applicator The unary operation to apply.
+     * @return The new vector given from the application.
+     */
+    public IntVectorN map(UnaryOperator<Integer> applicator) {
+        IntVectorN nv = new IntVectorN(dim);
+        for (int i = 0; i < dim; i++) {
+            nv.vec[i] = applicator.apply(vec[i]);
+        }
+        return nv;
+    }
+
+    /**
      * Multiplies the vector by a scalar.
      *
      * @param scalar The scalar.
@@ -206,26 +288,6 @@ public class IntVectorN implements Iterable<Integer> {
         return VectorN.fromStream(stream().mapToDouble(i -> i / scalar));
     }
 
-    public static IntVectorN of(int... vec) {
-        IntVectorN v = new IntVectorN(vec.length);
-        System.arraycopy(vec, 0, v.vec, 0, vec.length);
-        return v;
-    }
-
-    /**
-     * Creates a vector with ones in every index.
-     *
-     * @param dim The dimension of the vector.
-     * @return A d dimensional vector.
-     */
-    public static IntVectorN ones(int dim) {
-        IntVectorN v = new IntVectorN(dim);
-        for (int i = 0; i < dim; i++) {
-            v.vec[i] = 1;
-        }
-        return v;
-    }
-
     /**
      * Creates a new vector with every entry the same except for the entry at
      * index, which has the value value.
@@ -240,7 +302,7 @@ public class IntVectorN implements Iterable<Integer> {
         }
         IntVectorN nv = new IntVectorN(dim);
         for (int i = 0; i < dim; i++) {
-            nv.vec[index] = i == index ? value : vec[i];
+            nv.vec[i] = i == index ? value : vec[i];
         }
         return nv;
     }
@@ -326,13 +388,4 @@ public class IntVectorN implements Iterable<Integer> {
         return get(2);
     }
 
-    /**
-     * Creates a d dimensional zero vector.
-     *
-     * @param dim The dimension of the vector.
-     * @return A d dimensional vector.
-     */
-    public static IntVectorN zeros(int dim) {
-        return new IntVectorN(dim);
-    }
 }
