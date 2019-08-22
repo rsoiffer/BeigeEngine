@@ -1,5 +1,6 @@
 package graphics.opengl;
 
+import engine.Settings;
 import java.nio.ByteBuffer;
 import static org.lwjgl.opengl.ARBTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY;
 import static org.lwjgl.opengl.GL11.*;
@@ -45,9 +46,9 @@ public class Texture extends GLObject {
         int[] heightArray = new int[1];
         int[] compArray = new int[1];
         stbi_set_flip_vertically_on_load(true);
-        ByteBuffer image = stbi_load("sprites/" + fileName, widthArray, heightArray, compArray, 4);
+        ByteBuffer image = stbi_load(Settings.TEXTURE_LOAD_FOLDER + fileName, widthArray, heightArray, compArray, 4);
         if (image == null) {
-            throw new RuntimeException("Failed to load image " + fileName + " : " + stbi_failure_reason());
+            throw new RuntimeException("Failed to load image " + Settings.TEXTURE_LOAD_FOLDER + fileName + " : " + stbi_failure_reason());
         }
 
         Texture t = new Texture(GL_TEXTURE_2D);

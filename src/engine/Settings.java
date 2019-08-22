@@ -18,4 +18,6 @@ public class Settings {
 
     public static double MIN_FRAME_TIME = .001;
     public static double MAX_FRAME_TIME = .1;
+    
+    public static String TEXTURE_LOAD_FOLDER = "sprites/";
 }
