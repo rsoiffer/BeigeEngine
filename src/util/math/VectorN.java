@@ -109,6 +109,15 @@ public class VectorN implements Iterable<Double> {
     }
 
     /**
+     * Returns the vector as an array of doubles.
+     *
+     * @return The double array of the component values.
+     */
+    public double[] asArray() {
+        return Arrays.copyOf(vec, dim);
+    }
+
+    /**
      * Asserts that the dimension of the vector is dim.
      *
      * @param dim The dimension that the vector must be equal to.

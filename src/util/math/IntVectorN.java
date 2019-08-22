@@ -105,6 +105,15 @@ public class IntVectorN implements Iterable<Integer> {
     }
 
     /**
+     * Returns the vector as an array of integers.
+     *
+     * @return The int array of the component values.
+     */
+    public int[] asArray() {
+        return Arrays.copyOf(vec, dim);
+    }
+
+    /**
      * Asserts that the dimension of the vector is dim.
      *
      * @param dim The dimension that the vector must be equal to.
@@ -200,7 +209,7 @@ public class IntVectorN implements Iterable<Integer> {
             return false;
         }
         for (int i = 0; i < dim; i++) {
-            if (Math.abs(vec[i] - w.vec[i]) >= EPSILON) {
+            if (Math.abs(vec[i] - w.vec[i]) > 0) {
                 return false;
             }
         }

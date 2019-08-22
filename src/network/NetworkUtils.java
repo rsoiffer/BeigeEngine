@@ -4,6 +4,7 @@ import graphics.Color;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
@@ -11,8 +12,10 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Consumer;
 import util.Log;
+import util.math.IntVectorN;
 import util.math.Vec2d;
 import util.math.Vec3d;
+import util.math.VectorN;
 
 public abstract class NetworkUtils {
 
@@ -68,7 +71,7 @@ public abstract class NetworkUtils {
     static final Map<Class, Reader<Connection, Object>> READERS = new HashMap();
     static final Map<Class, Writer<Connection, Object>> WRITERS = new HashMap();
 
-    static {
+    public static void initialize() {
         registerBasicType(Boolean.class, DataInputStream::readBoolean, DataOutputStream::writeBoolean);
         registerBasicType(Byte.class, DataInputStream::readByte, (o, b) -> o.writeByte(b));
         registerBasicType(Float.class, DataInputStream::readFloat, DataOutputStream::writeFloat);
@@ -80,6 +83,25 @@ public abstract class NetworkUtils {
         registerType(Color.class, c -> new Color(c.read(Double.class), c.read(Double.class), c.read(Double.class), c.read(Double.class)), (c, o) -> c.write(o.r, o.g, o.b, o.a));
         registerType(Vec2d.class, c -> new Vec2d(c.read(Double.class), c.read(Double.class)), (c, v) -> c.write(v.x, v.y));
         registerType(Vec3d.class, c -> new Vec3d(c.read(Double.class), c.read(Double.class), c.read(Double.class)), (c, v) -> c.write(v.x, v.y, v.z));
+
+        registerArrayType(Integer.class);
+        registerArrayType(Double.class);
+        registerType(IntVectorN.class, c -> {
+            Integer[] vals = c.read(Integer[].class);
+            int[] inVals = new int[vals.length];
+            for (int i = 0; i < vals.length; i++) {
+                inVals[i] = vals[i];
+            }
+            return IntVectorN.of(inVals);
+        }, (c, v) -> c.write(packSingle(v.asArray())));
+        registerType(VectorN.class, c -> {
+            Double[] vals = c.read(Double[].class);
+            double[] inVals = new double[vals.length];
+            for (int i = 0; i < vals.length; i++) {
+                inVals[i] = vals[i];
+            }
+            return VectorN.of(inVals);
+        }, (c, v) -> c.write(packSingle(v.asArray())));
     }
 
     private static <T> void registerBasicType(Class<T> c, Reader<DataInputStream, T> reader, Writer<DataOutputStream, T> writer) {
@@ -87,8 +109,77 @@ public abstract class NetworkUtils {
     }
 
     public static <T> void registerType(Class<T> c, Reader<Connection, T> reader, Writer<Connection, T> writer) {
-        READERS.put(c, (Reader) reader);
-        WRITERS.put(c, (Writer) writer);
+        if (!READERS.containsKey(c)) {
+            READERS.put(c, (Reader) reader);
+            WRITERS.put(c, (Writer) writer);
+        }
+    }
+
+    public static <T> void registerArrayType(Class<T> c) {
+        if (!READERS.containsKey(c)) {
+            throw new RuntimeException("Cannot register an array type for a type which is not registered: " + c);
+        }
+        Class arrayClass = Array.newInstance(c, 0).getClass();
+        if (!READERS.containsKey(arrayClass)) {
+            READERS.put(arrayClass, conn -> {
+                int len = conn.read(Integer.class);
+                T[] array = (T[]) Array.newInstance(c, len);
+                for (int i = 0; i < len; i++) {
+                    array[i] = conn.read(c);
+                }
+                return array;
+            });
+            WRITERS.put(arrayClass, (conn, a) -> {
+                Object[] array = (Object[]) a;
+                conn.write(array.length);
+                for (Object o : array) {
+                    if (o == null) {
+                        throw new RuntimeException("Null is not serializable.");
+                    }
+                    conn.write(o);
+                }
+            });
+        }
+    }
+
+    public static <T, S> void registerMapType(Class<T> kc, Class<S> vc) {
+        registerArrayType(kc);
+        registerArrayType(vc);
+        Map<T, S> s = new HashMap();
+        Class mapClass = s.getClass();
+        if (!READERS.containsKey(mapClass)) {
+            READERS.put(mapClass, conn -> {
+                T[] keys = (T[]) conn.read(Array.newInstance(kc, 0).getClass());
+                S[] values = (S[]) conn.read(Array.newInstance(vc, 0).getClass());
+                if (keys.length != values.length) {
+                    throw new RuntimeException("Key and value lengths do not match.");
+                }
+                Map<T, S> map = new HashMap();
+                for (int i = 0; i < keys.length; i++) {
+                    map.put(keys[i], values[i]);
+                }
+                return map;
+            });
+            WRITERS.put(mapClass, (conn, m) -> {
+                Map<T, S> map = (Map<T, S>) m;
+                Object[] rawKeys = map.keySet().toArray();
+                T[] keys = (T[]) Array.newInstance(kc, rawKeys.length);
+                for (int i = 0; i < rawKeys.length; i++) {
+                    keys[i] = (T) rawKeys[i];
+                }
+                S[] values = (S[]) Array.newInstance(vc, keys.length);
+                for (int i = 0; i < keys.length; i++) {
+                    if (keys[i] == null) {
+                        throw new RuntimeException("Null in keys is not serializable.");
+                    }
+                    values[i] = map.get(keys[i]);
+                    if (values[i] == null) {
+                        throw new RuntimeException("Null in values is not serializable.");
+                    }
+                }
+                conn.write(keys, values);
+            });
+        }
     }
 
     @FunctionalInterface
@@ -101,5 +192,32 @@ public abstract class NetworkUtils {
     public static interface Writer<T, R> {
 
         public void write(T t, R r) throws IOException;
+    }
+
+    /**
+     * Packages the objects into an array.
+     *
+     * @param o The objects to pack.
+     * @return The array containing all of the objects.
+     */
+    public static Object[] pack(Object... o) {
+        return o;
+    }
+
+    /**
+     * Packages the single object into an array.
+     *
+     * @param o The object to pack.
+     * @return The array containing the object.
+     */
+    public static Object[] packSingle(Object o) {
+        Object[] ret = new Object[1];
+        ret[0] = o;
+        return ret;
+    }
+    
+    public static <T, S> Class<HashMap<T, S>> getHashMapType(Class<T> kc, Class<S> vc){
+        Map<T, S> s = new HashMap();
+        return (Class<HashMap<T, S>>) s.getClass();
     }
 }

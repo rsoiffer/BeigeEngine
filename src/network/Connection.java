@@ -89,7 +89,7 @@ public class Connection {
         handlerMap.put((byte) id, handler);
     }
 
-    public synchronized void sendMessage(int id, Object... data) {
+    public synchronized void sendMessage(int id, Object[] data) {
         sendMessage(id, () -> write(data));
     }
 
