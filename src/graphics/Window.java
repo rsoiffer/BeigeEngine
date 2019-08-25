@@ -121,7 +121,7 @@ public class Window {
         GL.createCapabilities();
         glfwSwapInterval(0);
 
-        GLState.enable(GL_DEPTH_TEST, GL_BLEND);
+        GLState.enable(GL_BLEND); // GL_DEPTH_TEST,
         GLState.setBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         if (Settings.SHOW_OPENGL_DEBUG_INFO) {

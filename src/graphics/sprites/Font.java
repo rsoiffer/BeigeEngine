@@ -1,5 +1,6 @@
 package graphics.sprites;
 
+import engine.Settings;
 import graphics.Color;
 import graphics.opengl.BufferObject;
 import static graphics.opengl.GLObject.bindAll;
@@ -61,7 +62,7 @@ public class Font {
     private int pages;
 
     private Font(String name) {
-        String[] fontDesc = Resources.loadFileAsString("fonts/" + name + ".fnt").split("[\r\n]+");
+        String[] fontDesc = Resources.loadFileAsString(Settings.FONT_LOAD_FOLDER + name + ".fnt").split("[\r\n]+");
         for (String line : fontDesc) {
             Map<String, String> nvp = parseNameValuePairs(line);
             switch (parseTag(line)) {
@@ -249,6 +250,10 @@ public class Font {
 
         public void draw2dCentered(Transformation t, Color color, Color outlineColor) {
             draw2d(t.translate(new Vec3d(-width / 2, 0, 0)), color, outlineColor);
+        }
+        
+        public double getWidth(){
+            return width;
         }
     }
 }

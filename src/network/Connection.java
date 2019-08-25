@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import static network.NetworkUtils.ALIASES;
 import static network.NetworkUtils.READERS;
 import static network.NetworkUtils.WRITERS;
 import util.Log;
@@ -109,9 +110,16 @@ public class Connection {
             try {
                 for (Object o : a) {
                     if (!WRITERS.containsKey(o.getClass())) {
-                        throw new RuntimeException("Unknown data type: " + o.getClass());
+                        Class alias = ALIASES.get(o.getClass());
+                        System.out.println(alias);
+                        if (WRITERS.containsKey(alias)) {
+                            WRITERS.get(alias).write(this, o);
+                        } else {
+                            throw new RuntimeException("Unknown data type: " + o.getClass());
+                        }
+                    } else {
+                        WRITERS.get(o.getClass()).write(this, o);
                     }
-                    WRITERS.get(o.getClass()).write(this, o);
                 }
             } catch (IOException ex) {
                 close();

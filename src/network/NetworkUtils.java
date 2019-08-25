@@ -70,6 +70,8 @@ public abstract class NetworkUtils {
     //Readers and writers
     static final Map<Class, Reader<Connection, Object>> READERS = new HashMap();
     static final Map<Class, Writer<Connection, Object>> WRITERS = new HashMap();
+    
+    static final Map<Class, Class> ALIASES = new HashMap();
 
     public static void initialize() {
         registerBasicType(Boolean.class, DataInputStream::readBoolean, DataOutputStream::writeBoolean);
@@ -180,6 +182,14 @@ public abstract class NetworkUtils {
                 conn.write(keys, values);
             });
         }
+    }
+    
+    public static <T extends S, S> void registerAlias(Class<T> c, Class<S> alias){
+        ALIASES.put(c, alias);
+    }
+    
+    public static Class getAlias(Class c){
+        return ALIASES.get(c);
     }
 
     @FunctionalInterface

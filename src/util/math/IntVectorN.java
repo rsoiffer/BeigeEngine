@@ -201,6 +201,9 @@ public class IntVectorN implements Iterable<Integer> {
 
     @Override
     public boolean equals(Object v) {
+        if(v == null){
+            return false;
+        }
         if (!(v instanceof IntVectorN)) {
             return false;
         }

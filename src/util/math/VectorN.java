@@ -246,6 +246,9 @@ public class VectorN implements Iterable<Double> {
 
     @Override
     public boolean equals(Object v) {
+        if(v == null){
+            return false;
+        }
         if (!(v instanceof VectorN)) {
             return false;
         }

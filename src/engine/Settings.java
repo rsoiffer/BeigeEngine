@@ -28,4 +28,5 @@ public class Settings {
     public static double MAX_FRAME_TIME = .1;
     
     public static String TEXTURE_LOAD_FOLDER = "sprites/";
+    public static String FONT_LOAD_FOLDER = "fonts/";
 }
