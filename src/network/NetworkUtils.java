@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -95,7 +96,14 @@ public abstract class NetworkUtils {
                 inVals[i] = vals[i];
             }
             return IntVectorN.of(inVals);
-        }, (c, v) -> c.write(packSingle(v.asArray())));
+        }, (c, v) -> {
+            int[] vec = v.asArray();
+            Integer[] send = new Integer[vec.length];
+            for (int i = 0; i < vec.length; i++) {
+                send[i] = (Integer) vec[i];
+            }
+            c.write(packSingle(send));
+        });
         registerType(VectorN.class, c -> {
             Double[] vals = c.read(Double[].class);
             double[] inVals = new double[vals.length];
@@ -103,7 +111,14 @@ public abstract class NetworkUtils {
                 inVals[i] = vals[i];
             }
             return VectorN.of(inVals);
-        }, (c, v) -> c.write(packSingle(v.asArray())));
+        }, (c, v) -> {
+            double[] vec = v.asArray();
+            Double[] send = new Double[vec.length];
+            for (int i = 0; i < vec.length; i++) {
+                send[i] = (Double) vec[i];
+            }
+            c.write(packSingle(send));
+        });
     }
 
     private static <T> void registerBasicType(Class<T> c, Reader<DataInputStream, T> reader, Writer<DataOutputStream, T> writer) {

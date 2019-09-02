@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 import java.util.stream.IntStream;
-import static util.math.VectorN.EPSILON;
 
 /**
  * An immutable linear algebra vector. Has methods which facilitate with general
@@ -19,7 +18,7 @@ import static util.math.VectorN.EPSILON;
  * @author Kosmic
  */
 public class IntVectorN implements Iterable<Integer> {
-
+    
     /**
      * Creates a vector with a one in index index and zeros everywhere else.
      *

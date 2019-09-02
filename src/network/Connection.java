@@ -111,7 +111,6 @@ public class Connection {
                 for (Object o : a) {
                     if (!WRITERS.containsKey(o.getClass())) {
                         Class alias = ALIASES.get(o.getClass());
-                        System.out.println(alias);
                         if (WRITERS.containsKey(alias)) {
                             WRITERS.get(alias).write(this, o);
                         } else {
